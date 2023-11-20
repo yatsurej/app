@@ -4,14 +4,30 @@
     include 'navbar.php';
     include '../db_connect.php';
     include 'i_nav.php';
+
+    $_SESSION['last_active_page'] = basename(__FILE__);
+
+    if (isset($_SESSION['username'])) {
+        $username    = $_SESSION['username'];
+        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffResult = mysqli_query($conn, $staffQuery);
+
+        while($staffRow = mysqli_fetch_assoc($staffResult)){
+            $staffID    = $staffRow['staffID'];
+
+            $_SESSION['staffID'] = $staffID;
+        }
+    } else {
+        header('Location: index.php');
+        exit();
+    }
 ?>
-<div class="container w-50 my-3">
-    <div class="container text-start text-muted fst-italic">
-        Management of Exhibits
-    </div>
-    <div class="container text-end">
+<div class="container w-50">
+    <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
+        <p class="text-muted fst-italic">Management of Exhibits</p>
         <button class="btn btn-dark mb-2" href="#" data-bs-toggle="modal" data-bs-target="#addExhibitModal" role="button">
-            Add Exhibit
+            <i class="fa-solid fa-plus"></i>
+            <span class="ms-2">Add Exhibit</span>
         </button>
     </div>
     <div class="table-responsive">
@@ -49,7 +65,10 @@
                         <td>
                             <div class="text-center">
                                 <button type="button" class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#editExhibitModal<?php echo $exhibitCode; ?>">
-                                    Edit
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span class="ms-2">Edit</span>
+                                    </div>
                                 </button>
                             </div>
 
@@ -83,7 +102,9 @@
                                                         <option value="0" <?php echo ($exhibitStatus == 0) ? "selected" : ""; ?>>Inactive</option>
                                                     </select>
                                                 </div>
-                                                <button type="submit" name="editExhibit" class="btn btn-primary">Save changes</button>
+                                                <div class="text-end">
+                                                    <button type="submit" name="editExhibit" class="btn btn-success">Save changes</button>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
@@ -121,7 +142,9 @@
                         <label for="exhibitModel" class="form-label">Model</label>
                         <input type="text" class="form-control" id="exhibitModel" name="exhibitModel" placeholder="Enter exhibit's 3D model url" required>
                     </div>
-                    <button type="submit" name="addExhibit" class="btn btn-primary">Add</button>
+                    <div class="text-end">
+                        <button type="submit" name="addExhibit" class="btn btn-success">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>

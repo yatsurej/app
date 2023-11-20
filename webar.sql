@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 11, 2023 at 07:48 PM
+-- Generation Time: Nov 20, 2023 at 10:55 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -20,6 +20,34 @@ SET time_zone = "+00:00";
 --
 -- Database: `webar`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `accession`
+--
+
+CREATE TABLE `accession` (
+  `ID` int(11) NOT NULL,
+  `accessionCode` varchar(255) NOT NULL,
+  `establishmentCode` varchar(255) NOT NULL,
+  `galleryCode` varchar(255) NOT NULL,
+  `rackingCode` varchar(255) NOT NULL,
+  `exhibitID` int(11) NOT NULL,
+  `accessionDate` date NOT NULL,
+  `staffID` int(11) NOT NULL,
+  `posted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 - Not Posted; 1 - Posted',
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `accession`
+--
+
+INSERT INTO `accession` (`ID`, `accessionCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `accessionDate`, `staffID`, `posted`, `timestamp`) VALUES
+(1, 'A1', 'ESTB1', 'G1', 'R1', 1, '2023-11-01', 2, 1, '2023-11-18 16:44:20'),
+(2, 'A2', 'ESTB1', 'G2', 'R4 ', 6, '2023-11-13', 1, 1, '2023-11-18 17:38:58'),
+(3, 'A3', 'ESTB2', 'G6', 'R9', 9, '2023-11-15', 3, 0, '2023-11-20 09:20:29');
 
 -- --------------------------------------------------------
 
@@ -49,7 +77,7 @@ INSERT INTO `establishment` (`ID`, `establishmentCode`, `establishmentName`, `is
 --
 
 CREATE TABLE `exhibits` (
-  `ID` int(11) NOT NULL,
+  `exhibitID` int(11) NOT NULL,
   `exhibitCode` varchar(255) NOT NULL,
   `exhibitName` varchar(255) NOT NULL,
   `exhibitInformation` longtext NOT NULL,
@@ -62,7 +90,7 @@ CREATE TABLE `exhibits` (
 -- Dumping data for table `exhibits`
 --
 
-INSERT INTO `exhibits` (`ID`, `exhibitCode`, `exhibitName`, `exhibitInformation`, `exhibitModel`, `exhibitMarker`, `isActive`) VALUES
+INSERT INTO `exhibits` (`exhibitID`, `exhibitCode`, `exhibitName`, `exhibitInformation`, `exhibitModel`, `exhibitMarker`, `isActive`) VALUES
 (1, 'E1', 'exhibit_test1_name', 'exhibit_test1_information', 'exhibit_test1_modelurl', '', 1),
 (6, 'E2', 'exhibit_test2_name', 'exhibit_test2_information', 'exhibit_test2_modelurl', '', 1),
 (7, 'E3', 'exhibit_test3_name', 'exhibit_test3_information', 'exhibit_test3_modelurl', '', 1),
@@ -78,8 +106,18 @@ INSERT INTO `exhibits` (`ID`, `exhibitCode`, `exhibitName`, `exhibitInformation`
 CREATE TABLE `feedbacks` (
   `ID` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
-  `feedbackContent` longtext NOT NULL
+  `ratingScore` tinyint(1) NOT NULL,
+  `feedbackContent` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `feedbacks`
+--
+
+INSERT INTO `feedbacks` (`ID`, `userID`, `ratingScore`, `feedbackContent`) VALUES
+(3, 1, 5, 'Wow! Excellent quality of exhibits, I\'m in love.'),
+(4, 2, 2, 'My art is better...'),
+(5, 3, 3, 'cool');
 
 -- --------------------------------------------------------
 
@@ -110,125 +148,22 @@ INSERT INTO `gallery` (`ID`, `galleryCode`, `galleryName`, `establishmentCode`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `inventory`
---
-
-CREATE TABLE `inventory` (
-  `ID` int(11) NOT NULL,
-  `exhibitID` int(11) NOT NULL,
-  `establishmentCode` varchar(255) NOT NULL,
-  `galleryCode` varchar(255) NOT NULL,
-  `rackingCode` varchar(255) NOT NULL,
-  `staffID` int(11) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `inventory`
---
-
-INSERT INTO `inventory` (`ID`, `exhibitID`, `establishmentCode`, `galleryCode`, `rackingCode`, `staffID`, `timestamp`) VALUES
-(9, 1, 'ESTB1', 'G1', 'R2', 1, '2023-11-09 06:36:10'),
-(10, 6, 'ESTB1', 'G1', 'R2', 3, '2023-11-09 18:20:59'),
-(11, 7, 'ESTB1', 'G2', 'R4 ', 2, '2023-11-09 18:24:22'),
-(12, 9, 'ESTB2', 'G6', 'R9', 1, '2023-11-11 18:23:16');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `movement`
 --
 
 CREATE TABLE `movement` (
-  `ID` int(11) NOT NULL,
-  `movementCode` varchar(255) NOT NULL,
-  `establishmentCode` varchar(255) NOT NULL,
-  `galleryCode` varchar(255) NOT NULL,
-  `rackingCode` varchar(255) NOT NULL,
-  `exhibitID` int(11) NOT NULL,
-  `movementDate` date NOT NULL,
-  `staffID` int(11) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `movement`
---
-
-INSERT INTO `movement` (`ID`, `movementCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `movementDate`, `staffID`, `timestamp`) VALUES
-(3, 'M1', 'ESTB1', 'G1', 'R2', 1, '2023-11-08', 1, '2023-11-09 06:36:10'),
-(4, 'M2', 'ESTB1', 'G1', 'R2', 6, '2023-11-12', 3, '2023-11-09 18:20:59'),
-(5, 'M3', 'ESTB1', 'G2', 'R4 ', 7, '2023-11-10', 2, '2023-11-09 18:24:22'),
-(6, 'M4', 'ESTB2', 'G6', 'R9', 9, '2023-11-08', 1, '2023-11-11 18:23:16');
-
---
--- Triggers `movement`
---
-DELIMITER $$
-CREATE TRIGGER `movement_accession` AFTER INSERT ON `movement` FOR EACH ROW BEGIN
-    INSERT INTO inventory (exhibitID, establishmentCode, galleryCode, rackingCode, staffID, timestamp)
-    VALUES (NEW.exhibitID, NEW.establishmentCode, NEW.galleryCode, NEW.rackingCode, NEW.staffID, NEW.timestamp);
-    
-    INSERT INTO movement_record (movementCode,movementType, movementDate, movementFrom, movementTo, staffID,timestamp)
-    VALUES (NEW.movementCode, 'ACCESSION', NEW.movementDate, CONCAT(NEW.establishmentCode, ' - ',NEW.galleryCode, ' - ', NEW.rackingCode), CONCAT(NEW.establishmentCode, ' - ', NEW.galleryCode, ' - ', NEW.rackingCode), NEW.staffID, NEW.timestamp);
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `movement_transfer` AFTER UPDATE ON `movement` FOR EACH ROW BEGIN 
-	IF NEW.establishmentCode <> OLD.establishmentCode 
-	OR NEW.galleryCode <> OLD.galleryCode 
-	OR NEW.rackingCode <> OLD.rackingCode
-	OR NEW.movementDate <> OLD.movementDate 
-    THEN 
-    
-    UPDATE inventory 
-    SET establishmentCode = NEW.establishmentCode, 
-    	galleryCode = NEW.galleryCode, 
-        rackingCode = NEW.rackingCode, 
-        staffID = NEW.staffID, 
-        timestamp = NEW.timestamp 
-	WHERE inventory.exhibitID = NEW.exhibitID; 
-    
-    INSERT INTO movement_record (movementCode, movementType, movementDate, movementFrom, movementTo, staffID, timestamp) 
-    VALUES (NEW.movementCode, 'TRANSFER', NEW.movementDate, CONCAT(OLD.establishmentCode,' - ', OLD.galleryCode, ' - ', OLD.rackingCode), CONCAT(NEW.establishmentCode,' - ', NEW.galleryCode, ' - ', NEW.rackingCode), NEW.staffID, NEW.timestamp); 
-	END IF; 
-END
-$$
-DELIMITER ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `movement_record`
---
-
-CREATE TABLE `movement_record` (
-  `ID` int(11) NOT NULL,
+  `entryID` int(11) NOT NULL,
+  `posted` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 = Posted/Approved',
+  `postedDate` date NOT NULL,
   `movementCode` varchar(255) NOT NULL,
   `movementType` text NOT NULL,
-  `movementDate` date NOT NULL,
-  `movementFrom` text NOT NULL,
-  `movementTo` text NOT NULL,
+  `exhibitID` int(11) NOT NULL,
+  `locationFrom` text DEFAULT NULL,
+  `locationTo` text NOT NULL,
+  `actualCount` float NOT NULL,
   `staffID` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `movement_record`
---
-
-INSERT INTO `movement_record` (`ID`, `movementCode`, `movementType`, `movementDate`, `movementFrom`, `movementTo`, `staffID`, `timestamp`) VALUES
-(2, 'M1', 'ACCESSION', '2023-11-08', 'ESTB1 - G1 - R1', 'ESTB1 - G1 - R1', 1, '2023-11-09 06:31:21'),
-(3, 'M1', 'TRANSFER', '0000-00-00', 'ESTB1 - G1 - R1', 'ESTB1 - G1 - R2', 1, '2023-11-09 06:36:10'),
-(4, 'M2', 'ACCESSION', '2023-11-09', 'ESTB1 - G1 - R2', 'ESTB1 - G1 - R2', 3, '2023-11-09 08:57:31'),
-(5, 'M2', 'TRANSFER', '0000-00-00', 'ESTB1 - G1 - R2', 'ESTB1 - G1 - R1', 3, '2023-11-09 08:57:55'),
-(6, 'M2', 'TRANSFER', '0000-00-00', 'ESTB1 - G1 - R1', 'ESTB1 - G1 - R2', 3, '2023-11-09 08:58:19'),
-(7, 'M2', 'TRANSFER', '0000-00-00', 'ESTB1 - G1 - R2', 'ESTB1 - G1 - R2', 3, '2023-11-09 09:00:10'),
-(8, 'M2', 'TRANSFER', '2023-11-12', 'ESTB1 - G1 - R2', 'ESTB1 - G1 - R2', 3, '2023-11-09 18:20:59'),
-(9, 'M3', 'ACCESSION', '2023-11-10', 'ESTB1 - G2 - R3', 'ESTB1 - G2 - R3', 2, '2023-11-09 18:23:53'),
-(10, 'M3', 'TRANSFER', '2023-11-10', 'ESTB1 - G2 - R3', 'ESTB1 - G2 - R4 ', 2, '2023-11-09 18:24:22'),
-(11, 'M4', 'ACCESSION', '2023-11-08', 'ESTB2 - G6 - R9', 'ESTB2 - G6 - R9', 1, '2023-11-11 18:23:16');
 
 -- --------------------------------------------------------
 
@@ -266,7 +201,7 @@ INSERT INTO `racking` (`ID`, `rackingCode`, `rackingName`, `galleryCode`, `isAct
 --
 
 CREATE TABLE `staff` (
-  `ID` int(11) NOT NULL,
+  `staffID` int(11) NOT NULL,
   `firstName` text NOT NULL,
   `lastName` text NOT NULL,
   `contactNumber` varchar(20) NOT NULL,
@@ -280,10 +215,39 @@ CREATE TABLE `staff` (
 -- Dumping data for table `staff`
 --
 
-INSERT INTO `staff` (`ID`, `firstName`, `lastName`, `contactNumber`, `username`, `password`, `role`, `isActive`) VALUES
+INSERT INTO `staff` (`staffID`, `firstName`, `lastName`, `contactNumber`, `username`, `password`, `role`, `isActive`) VALUES
 (1, 'Admin', 'Admin', '09123456789', 'admin', 'admin', 'Admin', 1),
-(2, 'Staff 1 First Name', 'Staff 1 Last Name', '09123456789', 'u_staff1', 'p_staff1', 'Staff', 1),
-(3, 'Staff 2 First Name', 'Staff 2 Last Name', '09123456789', 'u_staff2', 'p_staff2', 'Staff', 1);
+(2, 'Gon', 'Freecs', '09123456789', 'gon', 'gon', 'Staff', 1),
+(3, 'Killua', 'Zoldyck', '09123456789', 'killua', 'killua', 'Staff', 1),
+(4, 'Albedo', 'Labidabs', '123456789', 'albedo', 'albedo', 'Staff', 1),
+(5, 'Kazuha', 'Kaedehara', '7684324', 'kazuha', 'kazuha', 'Admin', 1),
+(6, 'Pearl', 'Universe', '322121', 'pearl', 'pearl', 'Staff', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transfer`
+--
+
+CREATE TABLE `transfer` (
+  `ID` int(11) NOT NULL,
+  `transferCode` varchar(255) NOT NULL,
+  `establishmentCode` varchar(255) NOT NULL,
+  `galleryCode` varchar(255) NOT NULL,
+  `rackingCode` varchar(255) NOT NULL,
+  `exhibitID` int(11) NOT NULL,
+  `transferDate` date NOT NULL,
+  `staffID` int(11) NOT NULL,
+  `posted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 - Not Posted; 1 - Posted',
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `transfer`
+--
+
+INSERT INTO `transfer` (`ID`, `transferCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `transferDate`, `staffID`, `posted`, `timestamp`) VALUES
+(1, 'T1', 'ESTB1', 'G3', 'R5', 1, '2023-11-10', 3, 0, '2023-11-19 13:26:58');
 
 -- --------------------------------------------------------
 
@@ -292,13 +256,36 @@ INSERT INTO `staff` (`ID`, `firstName`, `lastName`, `contactNumber`, `username`,
 --
 
 CREATE TABLE `user` (
-  `ID` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `userFirstName` text DEFAULT NULL COMMENT 'optional',
+  `userLastName` text DEFAULT NULL COMMENT 'optional',
   `userEmail` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`userID`, `userFirstName`, `userLastName`, `userEmail`) VALUES
+(1, 'Froizel', 'Apolonio', 'froizelrej@gmail.com'),
+(2, 'Albedo', 'Pogi', 'albedo@gmail.com'),
+(3, NULL, NULL, 'test@gmail.com');
+
+--
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `accession`
+--
+ALTER TABLE `accession`
+  ADD PRIMARY KEY (`accessionCode`),
+  ADD KEY `ID` (`ID`),
+  ADD KEY `accession_fk1` (`establishmentCode`),
+  ADD KEY `accession_fk2` (`galleryCode`),
+  ADD KEY `accession_fk3` (`rackingCode`),
+  ADD KEY `accession_fk4` (`exhibitID`),
+  ADD KEY `accession_fk5` (`staffID`);
 
 --
 -- Indexes for table `establishment`
@@ -313,7 +300,7 @@ ALTER TABLE `establishment`
 -- Indexes for table `exhibits`
 --
 ALTER TABLE `exhibits`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`exhibitID`);
 
 --
 -- Indexes for table `feedbacks`
@@ -333,34 +320,11 @@ ALTER TABLE `gallery`
   ADD KEY `gallery_fk1` (`establishmentCode`);
 
 --
--- Indexes for table `inventory`
---
-ALTER TABLE `inventory`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `inventory_fk1` (`exhibitID`),
-  ADD KEY `inventory_fk2` (`galleryCode`),
-  ADD KEY `inventory_fk3` (`rackingCode`),
-  ADD KEY `inventory_fk4` (`staffID`),
-  ADD KEY `inventory_fk5` (`establishmentCode`);
-
---
 -- Indexes for table `movement`
 --
 ALTER TABLE `movement`
-  ADD PRIMARY KEY (`movementCode`),
-  ADD KEY `ID` (`ID`),
-  ADD KEY `movement_fk1` (`establishmentCode`),
-  ADD KEY `movement_fk2` (`galleryCode`),
-  ADD KEY `movement_fk3` (`rackingCode`),
-  ADD KEY `movement_fk4` (`exhibitID`),
-  ADD KEY `movement_fk5` (`staffID`);
-
---
--- Indexes for table `movement_record`
---
-ALTER TABLE `movement_record`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `mrecord_fk1` (`movementCode`);
+  ADD PRIMARY KEY (`entryID`),
+  ADD KEY `ID` (`entryID`);
 
 --
 -- Indexes for table `racking`
@@ -375,18 +339,36 @@ ALTER TABLE `racking`
 -- Indexes for table `staff`
 --
 ALTER TABLE `staff`
-  ADD PRIMARY KEY (`ID`),
+  ADD PRIMARY KEY (`staffID`),
   ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indexes for table `transfer`
+--
+ALTER TABLE `transfer`
+  ADD PRIMARY KEY (`transferCode`),
+  ADD KEY `ID` (`ID`),
+  ADD KEY `transfer_fk1` (`establishmentCode`),
+  ADD KEY `transfer_fk2` (`galleryCode`),
+  ADD KEY `transfer_fk3` (`rackingCode`),
+  ADD KEY `transfer_fk4` (`exhibitID`),
+  ADD KEY `transfer_fk5` (`staffID`);
 
 --
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`userID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `accession`
+--
+ALTER TABLE `accession`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `establishment`
@@ -398,13 +380,13 @@ ALTER TABLE `establishment`
 -- AUTO_INCREMENT for table `exhibits`
 --
 ALTER TABLE `exhibits`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `exhibitID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `feedbacks`
 --
 ALTER TABLE `feedbacks`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `gallery`
@@ -413,22 +395,10 @@ ALTER TABLE `gallery`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `inventory`
---
-ALTER TABLE `inventory`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
-
---
 -- AUTO_INCREMENT for table `movement`
 --
 ALTER TABLE `movement`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `movement_record`
---
-ALTER TABLE `movement_record`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `entryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `racking`
@@ -440,23 +410,39 @@ ALTER TABLE `racking`
 -- AUTO_INCREMENT for table `staff`
 --
 ALTER TABLE `staff`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `staffID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `transfer`
+--
+ALTER TABLE `transfer`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
 --
 
 --
+-- Constraints for table `accession`
+--
+ALTER TABLE `accession`
+  ADD CONSTRAINT `accession_fk1` FOREIGN KEY (`establishmentCode`) REFERENCES `establishment` (`establishmentCode`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `accession_fk2` FOREIGN KEY (`galleryCode`) REFERENCES `gallery` (`galleryCode`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `accession_fk3` FOREIGN KEY (`rackingCode`) REFERENCES `racking` (`rackingCode`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `accession_fk4` FOREIGN KEY (`exhibitID`) REFERENCES `exhibits` (`exhibitID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `accession_fk5` FOREIGN KEY (`staffID`) REFERENCES `staff` (`staffID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `feedbacks`
 --
 ALTER TABLE `feedbacks`
-  ADD CONSTRAINT `feedback_fk1` FOREIGN KEY (`userID`) REFERENCES `user` (`ID`) ON UPDATE NO ACTION;
+  ADD CONSTRAINT `feedback_fk1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `gallery`
@@ -465,36 +451,20 @@ ALTER TABLE `gallery`
   ADD CONSTRAINT `gallery_fk1` FOREIGN KEY (`establishmentCode`) REFERENCES `establishment` (`establishmentCode`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `inventory`
---
-ALTER TABLE `inventory`
-  ADD CONSTRAINT `inventory_fk1` FOREIGN KEY (`exhibitID`) REFERENCES `exhibits` (`ID`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `inventory_fk2` FOREIGN KEY (`galleryCode`) REFERENCES `gallery` (`galleryCode`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `inventory_fk3` FOREIGN KEY (`rackingCode`) REFERENCES `racking` (`rackingCode`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `inventory_fk4` FOREIGN KEY (`staffID`) REFERENCES `staff` (`ID`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `inventory_fk5` FOREIGN KEY (`establishmentCode`) REFERENCES `establishment` (`establishmentCode`) ON UPDATE CASCADE;
-
---
--- Constraints for table `movement`
---
-ALTER TABLE `movement`
-  ADD CONSTRAINT `movement_fk1` FOREIGN KEY (`establishmentCode`) REFERENCES `establishment` (`establishmentCode`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `movement_fk2` FOREIGN KEY (`galleryCode`) REFERENCES `gallery` (`galleryCode`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `movement_fk3` FOREIGN KEY (`rackingCode`) REFERENCES `racking` (`rackingCode`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `movement_fk4` FOREIGN KEY (`exhibitID`) REFERENCES `exhibits` (`ID`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `movement_fk5` FOREIGN KEY (`staffID`) REFERENCES `staff` (`ID`) ON UPDATE CASCADE;
-
---
--- Constraints for table `movement_record`
---
-ALTER TABLE `movement_record`
-  ADD CONSTRAINT `mrecord_fk1` FOREIGN KEY (`movementCode`) REFERENCES `movement` (`movementCode`) ON UPDATE NO ACTION;
-
---
 -- Constraints for table `racking`
 --
 ALTER TABLE `racking`
   ADD CONSTRAINT `racking_fk1` FOREIGN KEY (`galleryCode`) REFERENCES `gallery` (`galleryCode`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `transfer`
+--
+ALTER TABLE `transfer`
+  ADD CONSTRAINT `transfer_fk1` FOREIGN KEY (`establishmentCode`) REFERENCES `establishment` (`establishmentCode`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transfer_fk2` FOREIGN KEY (`galleryCode`) REFERENCES `gallery` (`galleryCode`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transfer_fk3` FOREIGN KEY (`rackingCode`) REFERENCES `racking` (`rackingCode`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transfer_fk4` FOREIGN KEY (`exhibitID`) REFERENCES `exhibits` (`exhibitID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `transfer_fk5` FOREIGN KEY (`staffID`) REFERENCES `staff` (`staffID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

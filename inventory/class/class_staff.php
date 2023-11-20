@@ -5,7 +5,7 @@
             // login 
             public function login($username, $password){
                 global $conn;
-                $q  = "SELECT * FROM staff WHERE username = '$username' AND password = '$password'";
+                $q  = "SELECT * FROM staff WHERE username = '$username' AND password = '$password' AND isActive = 1";
                 $r  = mysqli_query($conn, $q);
 
                 if (mysqli_num_rows($r) > 0) {
@@ -38,9 +38,13 @@
                     }
                 }
             }
-            public function editStaff($id, $staffFirstName, $staffLastName, $staffContactNumber, $staffUsername, $staffPassword){
+            public function editStaff($staffID, $staffUsername, $staffPassword, $staffStatus){
                 global $conn;
-                $q  = "UPDATE staff SET firstName = '$staffFirstName', lastName = '$staffLastName', contactNumber = '$staffContactNumber', username = '$staffUsername', password = '$staffPassword' WHERE ID = $id";
+                $q  = "UPDATE staff 
+                      SET username  = '$staffUsername', 
+                      password      = '$staffPassword', 
+                      isActive      = '$staffStatus' 
+                      WHERE staffID = $staffID";
                 $r  = mysqli_query($conn, $q);
 
                 if ($r){
@@ -50,6 +54,25 @@
                 }
             }
             
+            // profile editing
+            public function editProfile($ID, $firstName, $lastName, $contactNumber, $username, $password){
+                global $conn;
+                $q = "UPDATE staff
+                     SET firstName = '$firstName', 
+                     lastName      = '$lastName', 
+                     contactNumber = '$contactNumber', 
+                     username      = '$username', 
+                     password      = '$password'
+                     WHERE staffID = $ID";
+                $r  = mysqli_query($conn, $q);
+
+                if ($r){
+                    return $conn;
+                } else {
+                    echo $conn->error;
+                }
+            }
+
             // exhibit management
             public function addExhibit($exhibitName, $exhibitInformation, $exhibitModel) {
                 global $conn;
@@ -226,20 +249,60 @@
                     echo $conn->error;
                 }
             }
-            public function addTransaction($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date){
+            
+            // accession management
+            public function addAccession($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
                 global $conn;
 
-                $latestCode = "SELECT MAX(SUBSTRING(movementCode, 2)) AS maxCode FROM movement";
+                $latestCode = "SELECT MAX(SUBSTRING(accessionCode, 2)) AS maxCode FROM accession";
                 $result     = mysqli_query($conn, $latestCode);
             
                 if ($result) {
                     $row = mysqli_fetch_assoc($result);
                     $maxCode = $row['maxCode'];
             
-                    $nextCode = "M" . ($maxCode + 1);
-                    // staffID to be changed with session staff/admin 
-                    $q = "INSERT INTO movement(movementCode, establishmentCode, galleryCode, rackingCode, exhibitID, movementDate, staffID)
-                          VALUES('$nextCode', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '1')";
+                    $nextCode = "A" . ($maxCode + 1);
+                    $q = "INSERT INTO accession(accessionCode, establishmentCode, galleryCode, rackingCode, exhibitID, accessionDate, staffID)
+                          VALUES('$nextCode', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
+                    $r = mysqli_query($conn, $q);
+            
+                    if ($r) {
+                        return $conn;
+                    } else {
+                        echo $conn->error;
+                    }
+                } else {
+                    echo $conn->error;
+                }
+            }
+            public function confirmPost($accessionCode){
+                global $conn;
+
+                $q = "UPDATE accession SET posted = '1'
+                     WHERE accessionCode = '$accessionCode'";
+                $r = mysqli_query($conn, $q);
+
+                if($r){
+                    return $conn;
+                } else{
+                    echo $conn->error;
+                }
+            }
+
+            // transfer management
+            public function addTransfer($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
+                global $conn;
+
+                $latestCode = "SELECT MAX(SUBSTRING(transferCode, 2)) AS maxCode FROM transfer";
+                $result     = mysqli_query($conn, $latestCode);
+            
+                if ($result) {
+                    $row = mysqli_fetch_assoc($result);
+                    $maxCode = $row['maxCode'];
+            
+                    $nextCode = "T" . ($maxCode + 1);
+                    $q = "INSERT INTO transfer(transferCode, establishmentCode, galleryCode, rackingCode, exhibitID, transferDate, staffID)
+                          VALUES('$nextCode', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
                     $r = mysqli_query($conn, $q);
             
                     if ($r) {

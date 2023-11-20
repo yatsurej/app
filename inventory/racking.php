@@ -4,14 +4,28 @@
     include 'navbar.php';
     include '../db_connect.php';
     include 'l_nav.php';
+
+    if (isset($_SESSION['username'])) {
+        $username    = $_SESSION['username'];
+        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffResult = mysqli_query($conn, $staffQuery);
+
+        while($staffRow = mysqli_fetch_assoc($staffResult)){
+            $staffID    = $staffRow['staffID'];
+
+            $_SESSION['staffID'] = $staffID;
+        }
+    } else {
+        header('Location: index.php');
+        exit();
+    }
 ?>
-<div class="container w-50 my-3">
-    <div class="container text-start text-muted fst-italic">
-        Management of Racking
-    </div>
-    <div class="container text-end">
+<div class="container w-50">
+    <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
+        <p class="text-muted fst-italic">Management of Racking</p>
         <button class="btn btn-dark mb-2" href="#" data-bs-toggle="modal" data-bs-target="#addRackingModal" role="button">
-            Add Racking
+            <i class="fa-solid fa-plus"></i>
+            <span class="ms-2">Add Racking</span>
         </button>
     </div>
     <div class="table-responsive">
@@ -20,20 +34,22 @@
                 <tr>
                     <th scope="col">Code</th>
                     <th scope="col">Name</th>
-                    <th scope="col">From</th>
+                    <th scope="col">Location</th>
                     <th scope="col">Status</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                    $q= "SELECT * FROM racking";
+                    $q = "SELECT racking.*, gallery.galleryName 
+                    FROM racking 
+                    JOIN gallery ON racking.galleryCode = gallery.galleryCode";             
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
                         $rackingCode        = $row['rackingCode'];
                         $rackingName        = $row['rackingName'];
-                        $galleryCode        = $row['galleryCode'];
+                        $galleryName        = $row['galleryName'];
                         $rackingStatus      = $row['isActive'];
 
                         $statusText = ($rackingStatus == 1) ? "Active" : "Inactive";
@@ -41,12 +57,15 @@
                     <tr>
                         <td class="text-center"><?php echo $rackingCode; ?></td>
                         <td class="text-center"><?php echo $rackingName; ?></td>
-                        <td class="text-center"><?php echo $galleryCode ; ?></td>
+                        <td class="text-center"><?php echo $galleryName ; ?></td>
                         <td class="text-center"><?php echo $statusText; ?></td>
                         <td>
                             <div class="text-center">
                                 <button type="button" class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#editRackingModal<?php echo $rackingCode; ?>">
-                                    Edit
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span class="ms-2">Edit</span>
+                                    </div>
                                 </button>
                             </div>
 
@@ -90,7 +109,9 @@
                                                         <option value="0" <?php echo ($rackingStatus == 0) ? "selected" : ""; ?>>Inactive</option>
                                                     </select>
                                                 </div>
-                                                <button type="submit" name="editRacking" class="btn btn-primary">Save changes</button>
+                                                <div class="text-end">
+                                                    <button type="submit" name="editRacking" class="btn btn-success">Save changes</button>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
@@ -136,7 +157,10 @@
                         <label for="rackingName" class="form-label">Name</label>
                         <input type="text" class="form-control" id="rackingName" name="rackingName" placeholder="Enter racking name" required>
                     </div>
-                    <button type="submit" name="addRacking" class="btn btn-primary">Add</button>
+
+                    <div class="text-end">
+                        <button type="submit" name="addRacking" class="btn btn-success">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
