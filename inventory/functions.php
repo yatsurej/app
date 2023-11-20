@@ -1,25 +1,22 @@
 <?php
     require './class/class_staff.php';
     $classStaff  = new Staff;
+    session_start();
 
     if (isset($_POST['login'])) {
         if (isset($_POST['username']) && isset($_POST['password'])) {
             $username = $_POST['username'];
             $password = $_POST['password'];
-    
+
             $result = $classStaff->login($username, $password);
-    
+
             if ($result) {
                 $_SESSION['user_authenticated'] = true;
                 $_SESSION['user_role'] = $result;
-    
-                if ($result == 'Admin') {
-                    header("Location: admin-main.php");
-                    exit();
-                } elseif ($result == 'Staff') {
-                    header("Location: staff-main.php");
-                    exit();
-                }
+                $_SESSION['username'] = $username;
+
+                header("Location: index.php");
+                exit();
             } else {
                 echo "<script>alert('Invalid login details');window.location.href='login.php';</script>";
             }
@@ -56,7 +53,7 @@
     } elseif (isset($_POST['addStaff'])){
         $staffFirstName     = $_POST['staffFirstName'];
         $staffLastName      = $_POST['staffLastName'];
-        $staffContactNumber = $_POST['staffContactNumber'];
+        $staffContactNumber = $_POST['staffContactNo'];
         $staffUsername      = $_POST['staffUsername'];
         $staffPassword      = $_POST['staffPassword'];
 
@@ -69,17 +66,31 @@
             echo "error";
         }
     } elseif (isset($_POST['editStaff'])){
-        $id                 = $_POST['id'];
-        $staffFirstName     = $_POST['staffFirstName'];
-        $staffLastName      = $_POST['staffLastName'];
-        $staffContactNumber = $_POST['staffContactNumber'];
+        $staffID            = $_POST['staffID'];
         $staffUsername      = $_POST['staffUsername'];
         $staffPassword      = $_POST['staffPassword'];
+        $staffStatus        = $_POST['staffStatus'];
 
-        $result = $classStaff->editStaff($id, $staffFirstName, $staffLastName, $staffContactNumber, $staffUsername, $staffPassword);
+        $result = $classStaff->editStaff($staffID, $staffUsername, $staffPassword, $staffStatus);
 
         if ($result){
             header("Location: staff-list.php");
+            exit();
+        } else {
+            echo "error";
+        }
+    } elseif (isset($_POST['editProfile'])){
+        $ID            = $_POST['ID'];
+        $firstName     = $_POST['firstName'];
+        $lastName      = $_POST['lastName'];
+        $contactNumber = $_POST['contactNumber'];
+        $username      = $_POST['username'];
+        $password      = $_POST['password'];
+
+        $result = $classStaff->editProfile($ID, $firstName, $lastName, $contactNumber, $username, $password);
+
+        if ($result){
+            header("Location: profile.php");
             exit();
         } else {
             echo "error";
@@ -166,8 +177,10 @@
         }
     } elseif (isset($_POST['getEstablishments'])) {
         $options = '';
+        
         $q = "SELECT establishmentCode, establishmentName FROM establishment";
         $r = mysqli_query($conn, $q);
+
         while ($row = mysqli_fetch_assoc($r)) {
             $options .= "<option value='{$row['establishmentCode']}'>{$row['establishmentName']}</option>";
         }
@@ -176,8 +189,10 @@
     } elseif (isset($_POST['getGalleries']) && isset($_POST['establishmentCode'])) {
         $establishmentCode = $_POST['establishmentCode'];
         $options = '';
+
         $q = "SELECT galleryCode, galleryName FROM gallery WHERE establishmentCode = '$establishmentCode'";
         $r = mysqli_query($conn, $q);
+
         while ($row = mysqli_fetch_assoc($r)) {
             $options .= "<option value='{$row['galleryCode']}'>{$row['galleryName']}</option>";
         }
@@ -186,24 +201,52 @@
     } elseif (isset($_POST['getRackings']) && isset($_POST['galleryCode'])) {
         $galleryCode = $_POST['galleryCode'];
         $options = '';
+
         $q = "SELECT rackingCode, rackingName FROM racking WHERE galleryCode = '$galleryCode'";
         $r = mysqli_query($conn, $q);
+
         while ($row = mysqli_fetch_assoc($r)) {
             $options .= "<option value='{$row['rackingCode']}'>{$row['rackingName']}</option>";
         }
         echo $options;
         exit; 
-    } elseif (isset($_POST['addTransaction'])){
+    } elseif (isset($_POST['addAccession'])){
         $exhibitID          = $_POST['exhibitID'];
         $establishmentCode  = $_POST['establishmentCode'];
         $galleryCode        = $_POST['galleryCode'];
         $rackingCode        = $_POST['rackingCode'];
         $date               = $_POST['date'];
+        $staffID            = $_POST['staffID'];
 
-        $result             = $classStaff->addTransaction($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date);
+        $result             = $classStaff->addAccession($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID);
 
         if($result){
-            header("Location: transaction.php");
+            header("Location: accession.php");
+        } else {
+            echo "error";
+        }
+    } elseif (isset($_POST['confirmPostAccession'])){
+        $accessionCode = $_POST['accessionCode'];
+
+        $result        = $classStaff->confirmPost($accessionCode);
+
+        if($result){
+            header("Location: accession.php");
+        } else {
+            echo "error";
+        }
+    } elseif (isset($_POST['addTransfer'])){
+        $exhibitID          = $_POST['exhibitID'];
+        $establishmentCode  = $_POST['establishmentCode'];
+        $galleryCode        = $_POST['galleryCode'];
+        $rackingCode        = $_POST['rackingCode'];
+        $date               = $_POST['date'];
+        $staffID            = $_POST['staffID'];
+
+        $result             = $classStaff->addTransfer($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID);
+
+        if($result){
+            header("Location: transfer.php");
         } else {
             echo "error";
         }

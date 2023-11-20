@@ -4,14 +4,28 @@
     include 'navbar.php';
     include '../db_connect.php';
     include 'l_nav.php';
+
+    if (isset($_SESSION['username'])) {
+        $username    = $_SESSION['username'];
+        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffResult = mysqli_query($conn, $staffQuery);
+
+        while($staffRow = mysqli_fetch_assoc($staffResult)){
+            $staffID    = $staffRow['staffID'];
+
+            $_SESSION['staffID'] = $staffID;
+        }
+    } else {
+        header('Location: index.php');
+        exit();
+    }
 ?>
-<div class="container w-50 my-3">
-    <div class="container text-start text-muted fst-italic">
-        Management of Gallery
-    </div>
-    <div class="container text-end">
+<div class="container w-50">
+    <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
+        <p class="text-muted fst-italic">Management of Gallery</p>
         <button class="btn btn-dark mb-2" href="#" data-bs-toggle="modal" data-bs-target="#addGalleryModal" role="button">
-            Add Gallery
+            <i class="fa-solid fa-plus"></i>
+            <span class="ms-2">Add Gallery</span>
         </button>
     </div>
     <div class="table-responsive">
@@ -20,20 +34,22 @@
                 <tr>
                     <th scope="col">Code</th>
                     <th scope="col">Name</th>
-                    <th scope="col">From</th>
+                    <th scope="col">Location</th>
                     <th scope="col">Status</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                    $q= "SELECT * FROM gallery";
+                    $q = "SELECT gallery.*, establishment.establishmentName 
+                    FROM gallery 
+                    JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode";              
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
                         $galleryCode        = $row['galleryCode'];
                         $galleryName        = $row['galleryName'];
-                        $establishmentCode  = $row['establishmentCode'];
+                        $establishmentName  = $row['establishmentName'];
                         $galleryStatus      = $row['isActive'];
 
                         $statusText = ($galleryStatus == 1) ? "Active" : "Inactive";
@@ -41,12 +57,15 @@
                     <tr>
                         <td class="text-center"><?php echo $galleryCode; ?></td>
                         <td class="text-center"><?php echo $galleryName; ?></td>
-                        <td class="text-center"><?php echo $establishmentCode ; ?></td>
+                        <td class="text-center"><?php echo $establishmentName ; ?></td>
                         <td class="text-center"><?php echo $statusText; ?></td>
                         <td>
                             <div class="text-center">
                                 <button type="button" class="btn btn-dark " data-bs-toggle="modal" data-bs-target="#editGalleryModal<?php echo $galleryCode; ?>">
-                                    Edit
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span class="ms-2">Edit</span>
+                                    </div>
                                 </button>
                             </div>
 
@@ -90,7 +109,9 @@
                                                         <option value="0" <?php echo ($galleryStatus == 0) ? "selected" : ""; ?>>Inactive</option>
                                                     </select>
                                                 </div>
-                                                <button type="submit" name="editGallery" class="btn btn-primary">Save changes</button>
+                                                <div class="text-end">
+                                                    <button type="submit" name="editGallery" class="btn btn-success">Save changes</button>
+                                                </div>
                                             </form>
                                         </div>
                                     </div>
@@ -136,7 +157,10 @@
                         <label for="galleryName" class="form-label">Name</label>
                         <input type="text" class="form-control" id="galleryName" name="galleryName" placeholder="Enter gallery name" required>
                     </div>
-                    <button type="submit" name="addGallery" class="btn btn-primary">Add</button>
+
+                    <div class="text-end">
+                        <button type="submit" name="addGallery" class="btn btn-success">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
