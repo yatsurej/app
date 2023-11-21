@@ -227,8 +227,7 @@
         }
     } elseif (isset($_POST['confirmPostAccession'])){
         $accessionCode = $_POST['accessionCode'];
-
-        $result        = $classStaff->confirmPost($accessionCode);
+        $result        = $classStaff->confirmAccessionPost($accessionCode);
 
         if($result){
             header("Location: accession.php");
@@ -250,4 +249,14 @@
         } else {
             echo "error";
         }
-    } 
+    } elseif (isset($_POST['confirmPostTransfer'])){
+        $transferCode = $_POST['transferCode'];
+
+        $result        = $classStaff->confirmTransferPost($transferCode);
+
+        if($result){
+            header("Location: transfer.php");
+        } else {
+            echo "error";
+        }
+    }

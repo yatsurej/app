@@ -96,7 +96,7 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <form action="functions.php" method="post">
-                                            <input type="hidden" name="TransferCode" value="<?php echo $TransferCode; ?>">
+                                            <input type="hidden" name="transferCode" value="<?php echo $transferCode; ?>">
                                             <div class="modal-body">
                                                 <p>Are you sure you want to post this Transfer?</p>
                                             </div>

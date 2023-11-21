@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 20, 2023 at 10:55 AM
+-- Generation Time: Nov 21, 2023 at 03:29 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -37,6 +37,7 @@ CREATE TABLE `accession` (
   `accessionDate` date NOT NULL,
   `staffID` int(11) NOT NULL,
   `posted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 - Not Posted; 1 - Posted',
+  `datePosted` date NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -44,10 +45,24 @@ CREATE TABLE `accession` (
 -- Dumping data for table `accession`
 --
 
-INSERT INTO `accession` (`ID`, `accessionCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `accessionDate`, `staffID`, `posted`, `timestamp`) VALUES
-(1, 'A1', 'ESTB1', 'G1', 'R1', 1, '2023-11-01', 2, 1, '2023-11-18 16:44:20'),
-(2, 'A2', 'ESTB1', 'G2', 'R4 ', 6, '2023-11-13', 1, 1, '2023-11-18 17:38:58'),
-(3, 'A3', 'ESTB2', 'G6', 'R9', 9, '2023-11-15', 3, 0, '2023-11-20 09:20:29');
+INSERT INTO `accession` (`ID`, `accessionCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `accessionDate`, `staffID`, `posted`, `datePosted`, `timestamp`) VALUES
+(13, 'A1', 'ESTB1', 'G1', 'R1', 1, '2023-11-13', 4, 1, '2023-11-21', '2023-11-21 02:19:01'),
+(14, 'A2', 'ESTB2', 'G6', 'R9', 9, '2023-11-06', 4, 1, '2023-11-21', '2023-11-21 02:19:41');
+
+--
+-- Triggers `accession`
+--
+DELIMITER $$
+CREATE TRIGGER `accession_posted` AFTER UPDATE ON `accession` FOR EACH ROW BEGIN
+    IF new.posted = 1 AND new.posted <> old.posted THEN
+        INSERT INTO movement
+            (posted, datePosted, movementCode, movementType, exhibitID, locationFrom, actualCount, staffID)
+        VALUES
+            (1, new.datePosted, new.accessionCode, 'ACCESSION', new.exhibitID, CONCAT(new.establishmentCode, ' - ', new.galleryCode, ' - ', new.rackingCode), 1, new.staffID);
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -117,7 +132,9 @@ CREATE TABLE `feedbacks` (
 INSERT INTO `feedbacks` (`ID`, `userID`, `ratingScore`, `feedbackContent`) VALUES
 (3, 1, 5, 'Wow! Excellent quality of exhibits, I\'m in love.'),
 (4, 2, 2, 'My art is better...'),
-(5, 3, 3, 'cool');
+(5, 3, 3, 'cool'),
+(6, 2, 4, 'amazing'),
+(7, 1, 1, 'bad');
 
 -- --------------------------------------------------------
 
@@ -154,7 +171,7 @@ INSERT INTO `gallery` (`ID`, `galleryCode`, `galleryName`, `establishmentCode`, 
 CREATE TABLE `movement` (
   `entryID` int(11) NOT NULL,
   `posted` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 = Posted/Approved',
-  `postedDate` date NOT NULL,
+  `datePosted` date NOT NULL,
   `movementCode` varchar(255) NOT NULL,
   `movementType` text NOT NULL,
   `exhibitID` int(11) NOT NULL,
@@ -164,6 +181,15 @@ CREATE TABLE `movement` (
   `staffID` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `movement`
+--
+
+INSERT INTO `movement` (`entryID`, `posted`, `datePosted`, `movementCode`, `movementType`, `exhibitID`, `locationFrom`, `locationTo`, `actualCount`, `staffID`, `timestamp`) VALUES
+(22, 1, '2023-11-21', 'A1', 'ACCESSION', 1, 'ESTB1 - G1 - R1', '', 1, 4, '2023-11-21 02:19:01'),
+(23, 1, '2023-11-21', 'A2', 'ACCESSION', 9, 'ESTB2 - G6 - R9', '', 1, 4, '2023-11-21 02:19:41'),
+(24, 1, '2023-11-21', 'T1', 'TRANSFER', 9, '', 'ESTB1 - G2 - R4 ', 1, 4, '2023-11-21 02:28:31');
 
 -- --------------------------------------------------------
 
@@ -239,6 +265,7 @@ CREATE TABLE `transfer` (
   `transferDate` date NOT NULL,
   `staffID` int(11) NOT NULL,
   `posted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 - Not Posted; 1 - Posted',
+  `datePosted` date NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -246,8 +273,23 @@ CREATE TABLE `transfer` (
 -- Dumping data for table `transfer`
 --
 
-INSERT INTO `transfer` (`ID`, `transferCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `transferDate`, `staffID`, `posted`, `timestamp`) VALUES
-(1, 'T1', 'ESTB1', 'G3', 'R5', 1, '2023-11-10', 3, 0, '2023-11-19 13:26:58');
+INSERT INTO `transfer` (`ID`, `transferCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `transferDate`, `staffID`, `posted`, `datePosted`, `timestamp`) VALUES
+(2, 'T1', 'ESTB1', 'G2', 'R4 ', 9, '2023-11-13', 4, 1, '2023-11-21', '2023-11-21 02:22:54');
+
+--
+-- Triggers `transfer`
+--
+DELIMITER $$
+CREATE TRIGGER `transfer_posted` AFTER UPDATE ON `transfer` FOR EACH ROW BEGIN
+    IF new.posted = 1 AND new.posted <> old.posted THEN
+        INSERT INTO movement
+            (posted, datePosted, movementCode, movementType, exhibitID, locationTo, actualCount, staffID)
+        VALUES
+            (1, new.datePosted, new.transferCode, 'TRANSFER', new.exhibitID, CONCAT(new.establishmentCode, ' - ', new.galleryCode, ' - ', new.rackingCode), 1, new.staffID);
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -368,7 +410,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `accession`
 --
 ALTER TABLE `accession`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `establishment`
@@ -386,7 +428,7 @@ ALTER TABLE `exhibits`
 -- AUTO_INCREMENT for table `feedbacks`
 --
 ALTER TABLE `feedbacks`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `gallery`
@@ -398,7 +440,7 @@ ALTER TABLE `gallery`
 -- AUTO_INCREMENT for table `movement`
 --
 ALTER TABLE `movement`
-  MODIFY `entryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `entryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `racking`
@@ -416,7 +458,7 @@ ALTER TABLE `staff`
 -- AUTO_INCREMENT for table `transfer`
 --
 ALTER TABLE `transfer`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `user`
