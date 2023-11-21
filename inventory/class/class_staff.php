@@ -275,10 +275,11 @@
                     echo $conn->error;
                 }
             }
-            public function confirmPost($accessionCode){
+            public function confirmAccessionPost($accessionCode, $currentDate){
                 global $conn;
 
-                $q = "UPDATE accession SET posted = '1'
+                $q = "UPDATE accession 
+                     SET posted = '1', datePosted = CURDATE()
                      WHERE accessionCode = '$accessionCode'";
                 $r = mysqli_query($conn, $q);
 
@@ -311,6 +312,20 @@
                         echo $conn->error;
                     }
                 } else {
+                    echo $conn->error;
+                }
+            }
+            public function confirmTransferPost($transferCode){
+                global $conn;
+
+                $q = "UPDATE transfer 
+                     SET posted = '1', datePosted = CURDATE()
+                     WHERE transferCode = '$transferCode'";
+                $r = mysqli_query($conn, $q);
+
+                if($r){
+                    return $conn;
+                } else{
                     echo $conn->error;
                 }
             }

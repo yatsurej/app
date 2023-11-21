@@ -31,34 +31,36 @@
             <thead class="text-center">
                 <tr>
                     <th scope="col">Movement Code</th>
-                    <th scope="col">Type</th>
-                    <th scope="col">Date</th>
+                    <th scope="col">Movement Type</th>
                     <th scope="col">Location From</th>
                     <th scope="col">Location To</th>
+                    <th scope="col">Modified By</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                    // $q= "SELECT * FROM movement_record";
-                    // $r = mysqli_query($conn, $q);
+                    $q= "SELECT movement.*, staff.firstName, staff.lastName
+                        FROM movement
+                        JOIN staff ON movement.staffID = staff.staffID";
+                    $r = mysqli_query($conn, $q);
 
-                    // while ($row = mysqli_fetch_assoc($r)) {
-                    //     $movementCode  = $row['movementCode'];
-                    //     $movementType  = $row['movementType'];
-                    //     $movementDate  = $row['movementDate'];
-                    //     $movementFrom  = $row['movementFrom'];
-                    //     $movementTo    = $row['movementTo'];
-
+                    while ($row = mysqli_fetch_assoc($r)) {
+                        $movementCode  = $row['movementCode'];
+                        $movementType  = $row['movementType'];
+                        $locationFrom  = $row['locationFrom'];
+                        $locationTo    = $row['locationTo'];
+                        $firstName     = $row['firstName'];
+                        $lastName      = $row['lastName'];
                         ?>
                     <tr>
-                        <td class="text-center"><?php echo "to be edited"; ?></td>
-                        <td class="text-center"><?php echo "to be edited"; ?></td>
-                        <td class="text-center"><?php echo "to be edited"; ?></td>
-                        <td class="text-center"><?php echo "to be edited"; ?></td>
-                        <td class="text-center"><?php echo "to be edited";?></td>
+                        <td class="text-center"><?php echo $movementCode; ?></td>
+                        <td class="text-center"><?php echo $movementType; ?></td>
+                        <td class="text-center"><?php echo $locationFrom; ?></td>
+                        <td class="text-center"><?php echo $locationTo; ?></td>
+                        <td class="text-center"><?php echo $firstName . ' ' . $lastName;?></td>
                     </tr>
                 <?php
-                    // }
+                    }
                 ?>
             </tbody>
         </table>
