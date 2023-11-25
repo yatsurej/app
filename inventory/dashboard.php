@@ -4,7 +4,7 @@
     include 'navbar.php';
     include '../db_connect.php';
     include 'i_nav.php';
-    
+
     $_SESSION['last_active_page'] = basename(__FILE__);
 
     if (isset($_SESSION['username'])) {
@@ -30,29 +30,31 @@
         <table class="table table-hover">
             <thead class="text-center">
                 <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Location</th>
+                    <th scope="col">Exhibit Name</th>
+                    <th scope="col">Current Location</th>
                 </tr>
             </thead>
             <tbody>
-                <?php
-                    // $q= "SELECT e.exhibitName as E_name,
-                    //     CONCAT(i.establishmentCode,' - ', i.galleryCode, ' - ', i.rackingCode) as Location 
-                    //     FROM inventory i
-                    //     LEFT JOIN exhibits e ON i.exhibitID = e.ID";
-                    // $r = mysqli_query($conn, $q);
+            <?php
+                $q = "SELECT e.exhibitName, m.locationTo, SUM(m.actualCount) as totalActualCount
+                    FROM exhibits e
+                    INNER JOIN movement m ON e.exhibitID = m.exhibitID
+                    GROUP BY e.exhibitName, m.locationTo
+                    HAVING totalActualCount = 1
+                    ORDER BY totalActualCount DESC";
 
-                    // while ($row = mysqli_fetch_assoc($r)) {
-                    //     $exhibit       = $row['E_name'];
-                    //     $location      = $row['Location'];
+                $r = mysqli_query($conn, $q);
 
-                        ?>
+                while ($row = mysqli_fetch_assoc($r)) {
+                    $exhibit   = $row['exhibitName'];
+                    $location  = $row['locationTo'];
+                    ?>
                     <tr>
-                        <td class="text-center"><?php echo "to be edited"; ?></td>
-                        <td class="text-center"><?php echo "to be edited"; ?></td>
+                        <td class="text-center"><?php echo $exhibit; ?></td>
+                        <td class="text-start"><?php echo $location; ?></td>
                     </tr>
                 <?php
-                    // }
+                }
                 ?>
             </tbody>
         </table>

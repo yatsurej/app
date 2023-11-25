@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 21, 2023 at 03:29 AM
+-- Generation Time: Nov 25, 2023 at 05:58 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -46,20 +46,24 @@ CREATE TABLE `accession` (
 --
 
 INSERT INTO `accession` (`ID`, `accessionCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `accessionDate`, `staffID`, `posted`, `datePosted`, `timestamp`) VALUES
-(13, 'A1', 'ESTB1', 'G1', 'R1', 1, '2023-11-13', 4, 1, '2023-11-21', '2023-11-21 02:19:01'),
-(14, 'A2', 'ESTB2', 'G6', 'R9', 9, '2023-11-06', 4, 1, '2023-11-21', '2023-11-21 02:19:41');
+(25, 'A1', 'ESTB1', 'G2', 'R3', 6, '2023-11-26', 4, 1, '2023-11-25', '2023-11-25 14:54:06'),
+(26, 'A2', 'ESTB1', 'G2', 'R4 ', 8, '2023-11-26', 4, 1, '2023-11-25', '2023-11-25 15:26:23');
 
 --
 -- Triggers `accession`
 --
 DELIMITER $$
-CREATE TRIGGER `accession_posted` AFTER UPDATE ON `accession` FOR EACH ROW BEGIN
-    IF new.posted = 1 AND new.posted <> old.posted THEN
-        INSERT INTO movement
-            (posted, datePosted, movementCode, movementType, exhibitID, locationFrom, actualCount, staffID)
-        VALUES
-            (1, new.datePosted, new.accessionCode, 'ACCESSION', new.exhibitID, CONCAT(new.establishmentCode, ' - ', new.galleryCode, ' - ', new.rackingCode), 1, new.staffID);
-    END IF;
+CREATE TRIGGER `accession_posted` AFTER UPDATE ON `accession` FOR EACH ROW BEGIN 
+    IF new.posted = 1 AND new.posted <> old.posted THEN 
+        SET @establishmentName = (SELECT establishmentName FROM establishment WHERE establishmentCode = new.establishmentCode);
+        SET @galleryName = (SELECT galleryName FROM gallery WHERE galleryCode = new.galleryCode);
+        SET @rackingName = (SELECT rackingName FROM racking WHERE rackingCode = new.rackingCode);
+
+        INSERT INTO movement 
+            (posted, datePosted, movementCode, movementType, exhibitID, locationTo, actualCount, staffID) 
+        VALUES 
+            (1, new.datePosted, new.accessionCode, 'ACCESSION', new.exhibitID, CONCAT(@establishmentName, ' - ', @galleryName, ' - ', @rackingName), 1, new.staffID); 
+    END IF; 
 END
 $$
 DELIMITER ;
@@ -106,11 +110,11 @@ CREATE TABLE `exhibits` (
 --
 
 INSERT INTO `exhibits` (`exhibitID`, `exhibitCode`, `exhibitName`, `exhibitInformation`, `exhibitModel`, `exhibitMarker`, `isActive`) VALUES
-(1, 'E1', 'exhibit_test1_name', 'exhibit_test1_information', 'exhibit_test1_modelurl', '', 1),
-(6, 'E2', 'exhibit_test2_name', 'exhibit_test2_information', 'exhibit_test2_modelurl', '', 1),
-(7, 'E3', 'exhibit_test3_name', 'exhibit_test3_information', 'exhibit_test3_modelurl', '', 1),
-(8, 'E4', 'exhibit_test4_name', 'exhibit_test4_information', 'exhibit_test4_modelurl', '', 1),
-(9, 'E5', 'exhibit_test5_name', 'exhibit_test5_information', 'exhibit_test5_modelurl', '', 1);
+(1, 'E1', 'Ship in A Bottle', 'exhibit_test1_information', 'exhibit_test1_modelurl', '', 1),
+(6, 'E2', 'Elephant Fossil', 'exhibit_test2_information', 'exhibit_test2_modelurl', '', 1),
+(7, 'E3', 'Dress', 'exhibit_test3_information', 'exhibit_test3_modelurl', '', 1),
+(8, 'E4', 'Golden Mask', 'exhibit_test4_information', 'exhibit_test4_modelurl', '', 1),
+(9, 'E5', 'Church Sculpture', 'exhibit_test5_information', 'exhibit_test5_modelurl', '', 1);
 
 -- --------------------------------------------------------
 
@@ -187,9 +191,18 @@ CREATE TABLE `movement` (
 --
 
 INSERT INTO `movement` (`entryID`, `posted`, `datePosted`, `movementCode`, `movementType`, `exhibitID`, `locationFrom`, `locationTo`, `actualCount`, `staffID`, `timestamp`) VALUES
-(22, 1, '2023-11-21', 'A1', 'ACCESSION', 1, 'ESTB1 - G1 - R1', '', 1, 4, '2023-11-21 02:19:01'),
-(23, 1, '2023-11-21', 'A2', 'ACCESSION', 9, 'ESTB2 - G6 - R9', '', 1, 4, '2023-11-21 02:19:41'),
-(24, 1, '2023-11-21', 'T1', 'TRANSFER', 9, '', 'ESTB1 - G2 - R4 ', 1, 4, '2023-11-21 02:28:31');
+(51, 1, '2023-11-25', 'A1', 'ACCESSION', 6, NULL, 'National Museum Western Visayas - Gallery 2 - Table 1', 1, 4, '2023-11-25 14:54:06'),
+(56, 1, '2023-11-25', 'T1', 'TRANSFER', 6, 'National Museum Western Visayas - Gallery 2 - Table 1', 'National Museum Western Visayas - Gallery 2 - Table 1', -1, 4, '2023-11-25 15:14:47'),
+(57, 1, '2023-11-25', 'T1', 'TRANSFER', 6, 'National Museum Western Visayas - Gallery 2 - Table 1', 'National Museum Western Visayas - Gallery 1 - Display Unit', 1, 4, '2023-11-25 15:14:47'),
+(58, 1, '2023-11-25', 'A2', 'ACCESSION', 8, NULL, 'National Museum Western Visayas - Gallery 2 - Display Unit', 1, 4, '2023-11-25 15:26:23'),
+(59, 1, '2023-11-25', 'T2', 'TRANSFER', 8, 'National Museum Western Visayas - Gallery 2 - Display Unit', 'National Museum Western Visayas - Gallery 2 - Display Unit', -1, 4, '2023-11-25 15:26:46'),
+(60, 1, '2023-11-25', 'T2', 'TRANSFER', 8, 'National Museum Western Visayas - Gallery 2 - Display Unit', 'Stockroom - Stockroom 1 - Shelf 1', 1, 4, '2023-11-25 15:26:46'),
+(61, 1, '2023-11-25', 'T3', 'TRANSFER', 8, 'Stockroom - Stockroom 1 - Shelf 1', 'Stockroom - Stockroom 1 - Shelf 1', -1, 4, '2023-11-25 15:27:21'),
+(62, 1, '2023-11-25', 'T3', 'TRANSFER', 8, 'Stockroom - Stockroom 1 - Shelf 1', 'National Museum Western Visayas - Gallery 4 - Glass Wall', 1, 4, '2023-11-25 15:27:21'),
+(63, 1, '2023-11-25', 'T4', 'TRANSFER', 6, 'National Museum Western Visayas - Gallery 1 - Display Unit', 'National Museum Western Visayas - Gallery 1 - Display Unit', -1, 4, '2023-11-25 15:28:38'),
+(64, 1, '2023-11-25', 'T4', 'TRANSFER', 6, 'National Museum Western Visayas - Gallery 1 - Display Unit', 'Stockroom - Stockroom 1 - Shelf 1', 1, 4, '2023-11-25 15:28:38'),
+(65, 1, '2023-11-25', 'T5', 'TRANSFER', 8, 'National Museum Western Visayas - Gallery 4 - Glass Wall', 'National Museum Western Visayas - Gallery 4 - Glass Wall', -1, 5, '2023-11-25 15:59:45'),
+(66, 1, '2023-11-25', 'T5', 'TRANSFER', 8, 'National Museum Western Visayas - Gallery 4 - Glass Wall', 'National Museum Western Visayas - Gallery 3 - Cabinet 1', 1, 5, '2023-11-25 15:59:45');
 
 -- --------------------------------------------------------
 
@@ -258,6 +271,7 @@ INSERT INTO `staff` (`staffID`, `firstName`, `lastName`, `contactNumber`, `usern
 CREATE TABLE `transfer` (
   `ID` int(11) NOT NULL,
   `transferCode` varchar(255) NOT NULL,
+  `sourceLocation` varchar(255) NOT NULL,
   `establishmentCode` varchar(255) NOT NULL,
   `galleryCode` varchar(255) NOT NULL,
   `rackingCode` varchar(255) NOT NULL,
@@ -273,20 +287,33 @@ CREATE TABLE `transfer` (
 -- Dumping data for table `transfer`
 --
 
-INSERT INTO `transfer` (`ID`, `transferCode`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `transferDate`, `staffID`, `posted`, `datePosted`, `timestamp`) VALUES
-(2, 'T1', 'ESTB1', 'G2', 'R4 ', 9, '2023-11-13', 4, 1, '2023-11-21', '2023-11-21 02:22:54');
+INSERT INTO `transfer` (`ID`, `transferCode`, `sourceLocation`, `establishmentCode`, `galleryCode`, `rackingCode`, `exhibitID`, `transferDate`, `staffID`, `posted`, `datePosted`, `timestamp`) VALUES
+(15, 'T1', 'National Museum Western Visayas - Gallery 2 - Table 1', 'ESTB1', 'G1', 'R1', 6, '2023-11-26', 4, 1, '2023-11-25', '2023-11-25 15:14:47'),
+(16, 'T2', 'National Museum Western Visayas - Gallery 2 - Display Unit', 'ESTB2', 'G6', 'R9', 8, '2023-11-24', 4, 1, '2023-11-25', '2023-11-25 15:26:46'),
+(17, 'T3', 'Stockroom - Stockroom 1 - Shelf 1', 'ESTB1', 'G4', 'R7', 8, '2023-11-26', 4, 1, '2023-11-25', '2023-11-25 15:27:21'),
+(18, 'T4', 'National Museum Western Visayas - Gallery 1 - Display Unit', 'ESTB2', 'G6', 'R9', 6, '2023-11-26', 4, 1, '2023-11-25', '2023-11-25 15:28:38'),
+(19, 'T5', 'National Museum Western Visayas - Gallery 4 - Glass Wall', 'ESTB1', 'G3', 'R5', 8, '2023-11-23', 5, 1, '2023-11-25', '2023-11-25 15:59:45');
 
 --
 -- Triggers `transfer`
 --
 DELIMITER $$
-CREATE TRIGGER `transfer_posted` AFTER UPDATE ON `transfer` FOR EACH ROW BEGIN
-    IF new.posted = 1 AND new.posted <> old.posted THEN
-        INSERT INTO movement
-            (posted, datePosted, movementCode, movementType, exhibitID, locationTo, actualCount, staffID)
-        VALUES
-            (1, new.datePosted, new.transferCode, 'TRANSFER', new.exhibitID, CONCAT(new.establishmentCode, ' - ', new.galleryCode, ' - ', new.rackingCode), 1, new.staffID);
-    END IF;
+CREATE TRIGGER `transfer_posted` AFTER UPDATE ON `transfer` FOR EACH ROW BEGIN 
+    IF new.posted = 1 AND new.posted <> old.posted THEN 
+        SET @establishmentName = (SELECT establishmentName FROM establishment WHERE establishmentCode = new.establishmentCode);
+        SET @galleryName = (SELECT galleryName FROM gallery WHERE galleryCode = new.galleryCode);
+        SET @rackingName = (SELECT rackingName FROM racking WHERE rackingCode = new.rackingCode);
+
+        INSERT INTO movement 
+            (posted, datePosted, movementCode, movementType, exhibitID, locationFrom, locationTo, actualCount, staffID) 
+        VALUES 
+            (1, new.datePosted, new.transferCode, 'TRANSFER', new.exhibitID, old.sourceLocation, new.sourceLocation, -1, new.staffID); 
+            
+         INSERT INTO movement 
+            (posted, datePosted, movementCode, movementType, exhibitID, locationFrom, locationTo, actualCount, staffID) 
+        VALUES 
+            (1, new.datePosted, new.transferCode, 'TRANSFER', new.exhibitID, new.sourceLocation, CONCAT(@establishmentName, ' - ', @galleryName, ' - ', @rackingName), 1, new.staffID); 
+    END IF; 
 END
 $$
 DELIMITER ;
@@ -366,7 +393,8 @@ ALTER TABLE `gallery`
 --
 ALTER TABLE `movement`
   ADD PRIMARY KEY (`entryID`),
-  ADD KEY `ID` (`entryID`);
+  ADD KEY `ID` (`entryID`),
+  ADD KEY `movement_fk1` (`exhibitID`);
 
 --
 -- Indexes for table `racking`
@@ -410,7 +438,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `accession`
 --
 ALTER TABLE `accession`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `establishment`
@@ -440,7 +468,7 @@ ALTER TABLE `gallery`
 -- AUTO_INCREMENT for table `movement`
 --
 ALTER TABLE `movement`
-  MODIFY `entryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `entryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `racking`
@@ -458,7 +486,7 @@ ALTER TABLE `staff`
 -- AUTO_INCREMENT for table `transfer`
 --
 ALTER TABLE `transfer`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -491,6 +519,12 @@ ALTER TABLE `feedbacks`
 --
 ALTER TABLE `gallery`
   ADD CONSTRAINT `gallery_fk1` FOREIGN KEY (`establishmentCode`) REFERENCES `establishment` (`establishmentCode`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `movement`
+--
+ALTER TABLE `movement`
+  ADD CONSTRAINT `movement_fk1` FOREIGN KEY (`exhibitID`) REFERENCES `exhibits` (`exhibitID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `racking`

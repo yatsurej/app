@@ -3,7 +3,7 @@
     include '../header.php';
     include 'navbar.php';
     include '../db_connect.php';
-    include 'l_nav.php';
+    include 'i_nav.php';
 
     if (isset($_SESSION['username'])) {
         $username    = $_SESSION['username'];
@@ -61,10 +61,9 @@
                         <td class="text-center"><?php echo $statusText; ?></td>
                         <td>
                             <div class="text-center">
-                                <button type="button" class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#editRackingModal<?php echo $rackingCode; ?>">
+                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editRackingModal<?php echo $rackingCode; ?>">
                                     <div class="d-flex align-items-center">
                                         <i class="fa-solid fa-pen-to-square"></i>
-                                        <span class="ms-2">Edit</span>
                                     </div>
                                 </button>
                             </div>

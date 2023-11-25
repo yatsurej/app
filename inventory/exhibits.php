@@ -64,10 +64,9 @@
                         <td class="text-center"><?php echo $statusText; ?></td>
                         <td>
                             <div class="text-center">
-                                <button type="button" class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#editExhibitModal<?php echo $exhibitCode; ?>">
+                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editExhibitModal<?php echo $exhibitCode; ?>">
                                     <div class="d-flex align-items-center">
                                         <i class="fa-solid fa-pen-to-square"></i>
-                                        <span class="ms-2">Edit</span>
                                     </div>
                                 </button>
                             </div>

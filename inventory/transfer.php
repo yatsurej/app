@@ -36,8 +36,9 @@
                 <tr>
                     <th scope="col">Code</th>
                     <th scope="col">Exhibit</th>
+                    <th scope="col">Source<small class="d-block text-muted fst-italic">establishment - gallery - racking</small></th>
                     <th scope="col">Location<small class="d-block text-muted fst-italic">establishment - gallery - racking</small></th>
-                    <th scope="col">Date</th>
+                    <th scope="col">Transfer Date</th>
                     <th scope="col">Staff</th>
                     <th scope="col">Status</th>
                     <th scope="col">Action</th>
@@ -45,21 +46,24 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT transfer.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibits.exhibitName
+                    $q = "SELECT transfer.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibits.exhibitName, staff.firstName, staff.lastName
                     FROM transfer 
                     LEFT JOIN establishment ON transfer.establishmentCode = establishment.establishmentCode
                     LEFT JOIN gallery ON transfer.galleryCode = gallery.galleryCode
                     LEFT JOIN racking ON transfer.rackingCode = racking.rackingCode
-                    LEFT JOIN exhibits ON transfer.exhibitID = exhibits.exhibitID";
+                    LEFT JOIN exhibits ON transfer.exhibitID = exhibits.exhibitID
+                    LEFT JOIN staff ON transfer.staffID = staff.staffID";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
                         $transferCode         = $row['transferCode'];
+                        $sourceLocation       = $row['sourceLocation'];
                         $establishmentName    = $row['establishmentName'];
                         $galleryName          = $row['galleryName'];
                         $rackingName          = $row['rackingName'];
                         $exhibitName          = $row['exhibitName'];
-                        $staffID              = $row['staffID'];
+                        $staffFirstName       = $row['firstName'];
+                        $staffLastName        = $row['lastName'];
                         $transferDate         = $row['transferDate'];
                         $posted               = $row['posted'];
 
@@ -68,9 +72,10 @@
                     <tr>
                         <td class="text-center"><?php echo $transferCode; ?></td>
                         <td class="text-center"><?php echo $exhibitName; ?></td>
-                        <td class="text-center"><?php echo $establishmentName . ' - ' . $galleryName . ' - ' . $rackingName; ?></td>
+                        <td class="text-center"><?php echo $sourceLocation; ?></td>
+                        <td class="text-center"><?php echo $establishmentName . ' -<br>' . $galleryName . ' -<br>' . $rackingName; ?></td>
                         <td class="text-center"><?php echo $transferDate; ?></td>
-                        <td class="text-center"><?php echo $staffID; ?></td>
+                        <td class="text-center"><?php echo $staffFirstName . ' ' . $staffLastName; ?></td>
                         <td class="text-center"><?php echo $postStatus; ?></td>
                         <td>
                             <div class="text-center">
@@ -119,14 +124,7 @@
 </div>
 
     <?php
-        $q = "SELECT * FROM accession WHERE posted = 1";
-        $r = mysqli_query($conn, $q);
-
-        while ($row = mysqli_fetch_assoc($r)) {
-            $accessionExhibit       = $row['exhibitID'];
-            $accessionEstablishment = $row['establishmentCode'];
-            $accessionGallery       = $row['galleryCode'];
-            $accessionRacking       = $row['rackingCode'];
+        $accessionExhibit = '';
     ?>
     
 <!-- Add Transfer Modal -->
@@ -142,35 +140,34 @@
                     <div class="mb-3">
                         <label for="exhibitID" class="form-label">Exhibit</label>
                         <select class="form-select" id="exhibitID" name="exhibitID" required>
+                            <option value="" <?php echo ($accessionExhibit == '') ? 'selected' : ''; ?>>Select exhibit</option>
                             <?php
-                            $query = "
-                                SELECT e.exhibitID, e.exhibitName,
-                                    est.establishmentName, gal.galleryName, rac.rackingName
-                                FROM exhibits e
-                                INNER JOIN accession a ON e.exhibitID = a.exhibitID
-                                LEFT JOIN establishment est ON a.establishmentCode = est.establishmentCode
-                                LEFT JOIN gallery gal ON a.galleryCode = gal.galleryCode
-                                LEFT JOIN racking rac ON a.rackingCode = rac.rackingCode
-                                WHERE e.isActive = 1 AND a.posted = 1
-                            ";
+                                $query = "SELECT e.exhibitID, e.exhibitName
+                                         FROM exhibits e
+                                         INNER JOIN accession a ON e.exhibitID = a.exhibitID
+                                         WHERE e.isActive = 1 AND a.posted = 1";
 
-                            $result = mysqli_query($conn, $query);
+                                $result = mysqli_query($conn, $query);
 
-                            while ($exhibitsRow = mysqli_fetch_assoc($result)) {
-                                $exhibitID         = $exhibitsRow['exhibitID'];
-                                $exhibitName       = $exhibitsRow['exhibitName'];
-                                $establishmentName = $exhibitsRow['establishmentName'];
-                                $galleryName       = $exhibitsRow['galleryName'];
-                                $rackingName       = $exhibitsRow['rackingName'];
+                                while ($exhibitsRow = mysqli_fetch_assoc($result)) {
+                                    $exhibitID         = $exhibitsRow['exhibitID'];
+                                    $exhibitName       = $exhibitsRow['exhibitName'];
 
-                                $selected = ($exhibitID == $accessionExhibit) ? 'selected' : '';
+                                    $selected = ($exhibitID == '') ? 'selected' : 'Select exhibit';
 
-                                echo "<option value=\"$exhibitID\" $selected>$exhibitName</option>";
-                            }
+                                    echo "<option value=\"$exhibitID\" $selected>$exhibitName</option>";
+                                }
                             ?>
                         </select>
                     </div>
-
+                    <div class="mb-3">
+                        <label for="sourceLocation">Source Location<small class="d-block text-muted fst-italic">establishment - gallery - racking</small></label>
+                        <input class="form-control" type="text" id="sourceLocation" name="sourceLocation" readonly>
+                    </div>
+                    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+                    <div class="text-center">
+                        <label for="">Destination</label>
+                    </div>
                     <div class="mb-3">
                         <label for="establishment">Establishment</label>
                         <select class="form-control" id="establishment" name="establishment" required>
@@ -196,7 +193,7 @@
                     <input type="hidden" id="rackingCode" name="rackingCode">
 
                     <div class="mb-3">
-                        <label for="date">Date</label>
+                        <label for="date">Transfer Date</label>
                         <input type="date" class="form-control" id="date" name="date" required>
                     </div>
                     <input type="hidden" name="staffID" value="<?php echo $_SESSION['staffID']; ?>">
@@ -209,15 +206,14 @@
         </div>
     </div>
 </div>
-<?php
-    }
-?>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        $("#establishment").html('<option value="">Select Establishment</option>');
-        $("#gallery").html('<option value="">Select Gallery</option>');
-        $("#racking").html('<option value="">Select Racking</option>');
+        $("#establishment").html('<option value="">Select establishment destination</option>');
+        $("#gallery").html('<option value="">Select gallery destination</option>');
+        $("#racking").html('<option value="">Select racking destination</option>');
 
         $.ajax({
             url: "functions.php",
@@ -232,9 +228,12 @@
             var establishmentCode = $(this).val();
             $("#establishmentCode").val(establishmentCode);
 
-            if (establishmentCode){
-                $("#gallery").html('<option value="">Select Gallery</option>');
-                $("#racking").html('<option value="">Select Racking</option>');
+            if (establishmentCode) {
+                $("#gallery").html('<option value="">Select gallery destination</option>');
+                $("#gallery").prop("disabled", true); 
+
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true); 
 
                 $("#gallery").prop("disabled", false);
 
@@ -246,6 +245,12 @@
                         $("#gallery").append(data);
                     }
                 });
+            } else {
+                $("#gallery").html('<option value="">Select gallery destination</option>');
+                $("#gallery").prop("disabled", true);
+
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true);
             }
         });
 
@@ -253,8 +258,10 @@
             var galleryCode = $(this).val();
             $("#galleryCode").val(galleryCode);
 
-            if (galleryCode){
-                $("#racking").html('<option value="">Select Racking</option>');
+            if (galleryCode) {
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true); 
+
                 $("#racking").prop("disabled", false);
 
                 $.ajax({
@@ -265,12 +272,33 @@
                         $("#racking").append(data);
                     }
                 });
+            } else {
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true);
             }
         });
 
         $("#racking").on("change", function() {
             var rackingCode = $(this).val();
             $("#rackingCode").val(rackingCode);
+        });
+
+        $('#sourceLocation').val('Select exhibit first');
+        $('#exhibitID').change(function () {
+            var selectedExhibitID = $(this).val();
+            if (selectedExhibitID !== '') {
+                $.ajax({
+                    url: 'functions.php',
+                    type: 'POST',
+                    data: { exhibitID: selectedExhibitID },
+                    success: function (data) {
+                        $('#sourceLocation').val(data);
+                    },
+                    error: function () {
+                        $('#sourceLocation').val('Error fetching source location.');
+                    }
+                });
+            } 
         });
     });
 </script>
