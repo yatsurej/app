@@ -275,7 +275,7 @@
                     echo $conn->error;
                 }
             }
-            public function confirmAccessionPost($accessionCode, $currentDate){
+            public function confirmAccessionPost($accessionCode){
                 global $conn;
 
                 $q = "UPDATE accession 
@@ -291,7 +291,7 @@
             }
 
             // transfer management
-            public function addTransfer($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
+            public function addTransfer($exhibitID, $sourceLocation, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
                 global $conn;
 
                 $latestCode = "SELECT MAX(SUBSTRING(transferCode, 2)) AS maxCode FROM transfer";
@@ -302,8 +302,8 @@
                     $maxCode = $row['maxCode'];
             
                     $nextCode = "T" . ($maxCode + 1);
-                    $q = "INSERT INTO transfer(transferCode, establishmentCode, galleryCode, rackingCode, exhibitID, transferDate, staffID)
-                          VALUES('$nextCode', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
+                    $q = "INSERT INTO transfer(transferCode, sourceLocation, establishmentCode, galleryCode, rackingCode, exhibitID, transferDate, staffID)
+                          VALUES('$nextCode', '$sourceLocation', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
                     $r = mysqli_query($conn, $q);
             
                     if ($r) {

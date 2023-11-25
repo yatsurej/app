@@ -14,9 +14,9 @@
 </style>
 
 <div class="container w-50 my-3">
-    <h1 class="text-start mt-4">Inventory</h1>
+    <h1 class="text-start fw-bold mt-4">Inventory</h1>
     <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-underline">
         <li class="nav-item">
             <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'dashboard.php') ? 'active' : 'inactive'; ?>" href="dashboard.php">Dashboard</a>
         </li>
@@ -32,8 +32,14 @@
         <li class="nav-item">
             <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'exhibits.php') ? 'active' : 'inactive'; ?>" href="exhibits.php">Exhibits</a>
         </li>
+        <li class="nav-item">        
+            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'racking.php') ? 'active' : 'inactive'; ?>" href="racking.php">Racking</a>
+        </li>
         <li class="nav-item">
-            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'racking.php') ? 'active' : 'inactive'; ?>" href="racking.php">Location</a>
+            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'Gallery.php') ? 'active' : 'inactive'; ?>" href="Gallery.php">Gallery</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'establishment.php') ? 'active' : 'inactive'; ?>" href="establishment.php">Establishment</a>
         </li>
     </ul>
 </div>

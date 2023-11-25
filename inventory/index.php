@@ -20,9 +20,13 @@
     include '../db_connect.php';
     include 'navbar.php';
 ?>
-
+<style>
+    img{
+        width: 80%;
+    }
+</style>
 <div class="container w-50 text-center mt-5">
-    <p>Welcome, 
+    <p class="fs-3">Welcome, 
         <?php 
             if ($_SESSION['user_role'] == 'Admin') {
                 echo "Admin ";
@@ -32,6 +36,11 @@
                 echo "Unknown Role";
             }
             echo $staffFirstName . ' ' . $staffLastName;
+            if ($_SESSION['user_role'] == 'Admin') {
+                echo '<img src="../images/admin.gif" alt="">';
+            } elseif ($_SESSION['user_role'] == 'Staff') {
+                echo '<img src="../images/staff.gif" alt="">';
+            } 
         ?>
     </p>
 </div>

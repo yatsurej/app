@@ -39,7 +39,7 @@
                     <th scope="col">Code</th>
                     <th scope="col">Exhibit</th>
                     <th scope="col">Location<small class="d-block text-muted fst-italic">establishment - gallery - racking</small></th>
-                    <th scope="col">Date</th>
+                    <th scope="col">Accession Date</th>
                     <th scope="col">Staff</th>
                     <th scope="col">Status</th>
                     <th scope="col">Action</th>
@@ -47,12 +47,13 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT accession.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibits.exhibitName
+                    $q = "SELECT accession.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibits.exhibitName, staff.firstName, staff.lastName
                     FROM accession 
                     LEFT JOIN establishment ON accession.establishmentCode = establishment.establishmentCode
                     LEFT JOIN gallery ON accession.galleryCode = gallery.galleryCode
                     LEFT JOIN racking ON accession.rackingCode = racking.rackingCode              
-                    LEFT JOIN exhibits ON accession.exhibitID = exhibits.exhibitID";
+                    LEFT JOIN exhibits ON accession.exhibitID = exhibits.exhibitID
+                    LEFT JOIN staff ON accession.staffID = staff.staffID";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
@@ -61,7 +62,8 @@
                         $galleryName          = $row['galleryName'];
                         $rackingName          = $row['rackingName'];
                         $exhibitName          = $row['exhibitName'];
-                        $staffID              = $row['staffID'];
+                        $staffFirstName       = $row['firstName'];
+                        $staffLastName        = $row['lastName'];
                         $accessionDate        = $row['accessionDate'];
                         $posted               = $row['posted'];
                         
@@ -71,9 +73,9 @@
                     <tr>
                         <td class="text-center"><?php echo $accessionCode; ?></td>
                         <td class="text-center"><?php echo $exhibitName; ?></td>
-                        <td class="text-center"><?php echo $establishmentName . ' - ' . $galleryName . ' - ' . $rackingName; ?></td>
+                        <td class="text-center"><?php echo $establishmentName . ' -<br>' . $galleryName . ' -<br>' . $rackingName; ?></td>
                         <td class="text-center"><?php echo $accessionDate; ?></td>
-                        <td class="text-center"><?php echo $staffID; ?></td>
+                        <td class="text-center"><?php echo $staffFirstName . ' ' . $staffLastName; ?></td>
                         <td class="text-center"><?php echo $postStatus; ?></td>
                         <td>
                             <div class="text-center">
@@ -136,6 +138,7 @@
                         <select class="form-select" id="exhibitID" name="exhibitID" required>
                             <?php
                                 $exhibitsQuery = "SELECT exhibitID, exhibitName FROM exhibits WHERE isActive = 1";
+                                $exhibitsQuery .= " AND exhibitID NOT IN (SELECT exhibitID FROM accession WHERE posted = 1)";
                                 $exhibitsResult = mysqli_query($conn, $exhibitsQuery);
 
                                 while ($exhibitsRow = mysqli_fetch_assoc($exhibitsResult)) {
@@ -173,7 +176,7 @@
                     <input type="hidden" id="rackingCode" name="rackingCode">
 
                     <div class="mb-3">
-                        <label for="date">Date</label>
+                        <label for="date">Accession Date</label>
                         <input type="date" class="form-control" id="date" name="date" required>
                     </div>
 
@@ -190,9 +193,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        $("#establishment").html('<option value="">Select Establishment</option>');
-        $("#gallery").html('<option value="">Select Gallery</option>');
-        $("#racking").html('<option value="">Select Racking</option>');
+        $("#establishment").html('<option value="">Select establishment destination</option>');
+        $("#gallery").html('<option value="">Select gallery destination</option>');
+        $("#racking").html('<option value="">Select racking destination</option>');
 
         $.ajax({
             url: "functions.php",
@@ -207,9 +210,12 @@
             var establishmentCode = $(this).val();
             $("#establishmentCode").val(establishmentCode);
 
-            if (establishmentCode){
-                $("#gallery").html('<option value="">Select Gallery</option>');
-                $("#racking").html('<option value="">Select Racking</option>');
+            if (establishmentCode) {
+                $("#gallery").html('<option value="">Select gallery destination</option>');
+                $("#gallery").prop("disabled", true); 
+
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true); 
 
                 $("#gallery").prop("disabled", false);
 
@@ -221,6 +227,12 @@
                         $("#gallery").append(data);
                     }
                 });
+            } else {
+                $("#gallery").html('<option value="">Select gallery destination</option>');
+                $("#gallery").prop("disabled", true);
+
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true);
             }
         });
 
@@ -228,8 +240,10 @@
             var galleryCode = $(this).val();
             $("#galleryCode").val(galleryCode);
 
-            if (galleryCode){
-                $("#racking").html('<option value="">Select Racking</option>');
+            if (galleryCode) {
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true); 
+
                 $("#racking").prop("disabled", false);
 
                 $.ajax({
@@ -240,6 +254,9 @@
                         $("#racking").append(data);
                     }
                 });
+            } else {
+                $("#racking").html('<option value="">Select racking destination</option>');
+                $("#racking").prop("disabled", true);
             }
         });
 
