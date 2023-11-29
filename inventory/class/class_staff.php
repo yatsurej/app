@@ -76,21 +76,21 @@
             // exhibit management
             public function addExhibit($exhibitName, $exhibitInformation, $exhibitModel) {
                 global $conn;
-            
-                $latestCode = "SELECT MAX(SUBSTRING(exhibitCode, 2)) AS maxCode FROM exhibits";
-                $result     = mysqli_query($conn, $latestCode);
-            
+
+                $latestCodeQuery = "SELECT MAX(CAST(SUBSTRING(exhibitCode, 2) AS SIGNED)) AS maxCode FROM exhibit";
+                $result = mysqli_query($conn, $latestCodeQuery);
+
                 if ($result) {
                     $row = mysqli_fetch_assoc($result);
                     $maxCode = $row['maxCode'];
-            
+
                     $nextExhibitCode = "E" . ($maxCode + 1);
-            
-                    $q = "INSERT INTO exhibits(exhibitCode, exhibitName, exhibitInformation, exhibitModel)
-                          VALUES('$nextExhibitCode', '$exhibitName', '$exhibitInformation', '$exhibitModel')";
-                    $r = mysqli_query($conn, $q);
-            
-                    if ($r) {
+
+                    $q = "INSERT INTO exhibit (exhibitCode, exhibitName, exhibitInformation, exhibitModel)
+                                    VALUES ('$nextExhibitCode', '$exhibitName', '$exhibitInformation', '$exhibitModel')";
+                    $q = mysqli_query($conn, $q);
+
+                    if ($q) {
                         return $conn;
                     } else {
                         echo $conn->error;
@@ -100,12 +100,13 @@
                 }
             }
 
+
             public function editExhibit($exhibitCode, $exhibitName, $exhibitInformation, $exhibitModel, $exhibitStatus){
                 global $conn;
 
                 $exhibitStatus = intval($exhibitStatus);
 
-                $q  = "UPDATE exhibits SET exhibitName = '$exhibitName', 
+                $q  = "UPDATE exhibit SET exhibitName = '$exhibitName', 
                       exhibitInformation = '$exhibitInformation', 
                       exhibitModel = '$exhibitModel',
                       isActive = $exhibitStatus
@@ -123,7 +124,7 @@
             public function addEstablishment($establishmentName) {
                 global $conn;
             
-                $latestCode = "SELECT MAX(SUBSTRING(establishmentCode, 5)) AS maxCode FROM establishment";
+                $latestCode = "SELECT MAX(CAST(SUBSTRING(establishmentCode, 5) AS SIGNED)) AS maxCode FROM establishment";
                 $result = mysqli_query($conn, $latestCode);
             
                 if ($result) {
@@ -166,7 +167,7 @@
             public function addGallery($establishmentCode, $galleryName) {
                 global $conn;
             
-                $latestCode = "SELECT MAX(SUBSTRING(galleryCode, 2)) AS maxCode FROM gallery";
+                $latestCode = "SELECT MAX(CAST(SUBSTRING(galleryCode, 2) AS SIGNED)) AS maxCode FROM gallery";
                 $result     = mysqli_query($conn, $latestCode);
             
                 if ($result) {
@@ -210,7 +211,7 @@
             public function addRacking($galleryCode, $rackingName) {
                 global $conn;
             
-                $latestCode = "SELECT MAX(SUBSTRING(rackingCode, 2)) AS maxCode FROM racking";
+                $latestCode = "SELECT MAX(CAST(SUBSTRING(rackingCode, 2) AS SIGNED)) AS maxCode FROM racking";
                 $result     = mysqli_query($conn, $latestCode);
             
                 if ($result) {
@@ -254,7 +255,7 @@
             public function addAccession($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
                 global $conn;
 
-                $latestCode = "SELECT MAX(SUBSTRING(accessionCode, 2)) AS maxCode FROM accession";
+                $latestCode = "SELECT MAX(CAST(SUBSTRING(accessionCode, 2) AS SIGNED)) AS maxCode FROM exhibit_accession";
                 $result     = mysqli_query($conn, $latestCode);
             
                 if ($result) {
@@ -262,7 +263,7 @@
                     $maxCode = $row['maxCode'];
             
                     $nextCode = "A" . ($maxCode + 1);
-                    $q = "INSERT INTO accession(accessionCode, establishmentCode, galleryCode, rackingCode, exhibitID, accessionDate, staffID)
+                    $q = "INSERT INTO exhibit_accession(accessionCode, establishmentCode, galleryCode, rackingCode, exhibitID, accessionDate, staffID)
                           VALUES('$nextCode', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
                     $r = mysqli_query($conn, $q);
             
@@ -278,7 +279,7 @@
             public function confirmAccessionPost($accessionCode){
                 global $conn;
 
-                $q = "UPDATE accession 
+                $q = "UPDATE exhibit_accession 
                      SET posted = '1', datePosted = CURDATE()
                      WHERE accessionCode = '$accessionCode'";
                 $r = mysqli_query($conn, $q);
@@ -294,7 +295,7 @@
             public function addTransfer($exhibitID, $sourceLocation, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
                 global $conn;
 
-                $latestCode = "SELECT MAX(SUBSTRING(transferCode, 2)) AS maxCode FROM transfer";
+                $latestCode = "SELECT MAX(CAST(SUBSTRING(transferCode, 2) AS SIGNED)) AS maxCode FROM exhibit_transfer";
                 $result     = mysqli_query($conn, $latestCode);
             
                 if ($result) {
@@ -302,7 +303,7 @@
                     $maxCode = $row['maxCode'];
             
                     $nextCode = "T" . ($maxCode + 1);
-                    $q = "INSERT INTO transfer(transferCode, sourceLocation, establishmentCode, galleryCode, rackingCode, exhibitID, transferDate, staffID)
+                    $q = "INSERT INTO exhibit_transfer(transferCode, sourceLocation, establishmentCode, galleryCode, rackingCode, exhibitID, transferDate, staffID)
                           VALUES('$nextCode', '$sourceLocation', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
                     $r = mysqli_query($conn, $q);
             
@@ -318,7 +319,7 @@
             public function confirmTransferPost($transferCode){
                 global $conn;
 
-                $q = "UPDATE transfer 
+                $q = "UPDATE exhibit_transfer 
                      SET posted = '1', datePosted = CURDATE()
                      WHERE transferCode = '$transferCode'";
                 $r = mysqli_query($conn, $q);

@@ -47,13 +47,14 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT accession.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibits.exhibitName, staff.firstName, staff.lastName
-                    FROM accession 
-                    LEFT JOIN establishment ON accession.establishmentCode = establishment.establishmentCode
-                    LEFT JOIN gallery ON accession.galleryCode = gallery.galleryCode
-                    LEFT JOIN racking ON accession.rackingCode = racking.rackingCode              
-                    LEFT JOIN exhibits ON accession.exhibitID = exhibits.exhibitID
-                    LEFT JOIN staff ON accession.staffID = staff.staffID";
+                    $q = "SELECT exhibit_accession.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibit.exhibitName, staff.firstName, staff.lastName
+                    FROM exhibit_accession 
+                    LEFT JOIN establishment ON exhibit_accession.establishmentCode = establishment.establishmentCode
+                    LEFT JOIN gallery ON exhibit_accession.galleryCode = gallery.galleryCode
+                    LEFT JOIN racking ON exhibit_accession.rackingCode = racking.rackingCode              
+                    LEFT JOIN exhibit ON exhibit_accession.exhibitID = exhibit.exhibitID
+                    LEFT JOIN staff ON exhibit_accession.staffID = staff.staffID
+                    ORDER BY LENGTH(exhibit_accession.accessionCode), exhibit_accession.accessionCode";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
@@ -82,12 +83,12 @@
                                 <?php if ($postStatus == "Not Posted") { ?>
                                     <button type="button" class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#postConfirmationModal<?php echo $accessionCode; ?>">
                                         <i class="fa-solid fa-arrow-up"></i>
-                                        <span class="ms-2">Post</span>
+                                        <span>Post</span>
                                     </button>
                                 <?php } else { ?>
                                     <button type="button" class="btn btn-dark mb-2" disabled>
                                         <i class="fa-solid fa-check"></i>
-                                        <span class="ms-2">Posted</span>
+                                        <span>Posted</span>
                                     </button>
                                 <?php } ?>
                             </div>
@@ -123,6 +124,9 @@
     </div>
 </div>
 
+<?php
+    $accessionExhibit = '';    
+?>
 <!-- Add Accession Modal -->
 <div class="modal fade" id="addAccessionModal" tabindex="-1" aria-labelledby="addAccessionModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -136,9 +140,9 @@
                     <div class="mb-3">
                         <label for="exhibitID" class="form-label">Exhibit</label>
                         <select class="form-select" id="exhibitID" name="exhibitID" required>
+                            <option value="" <?php echo ($accessionExhibit == '') ? 'selected' : ''; ?>>Select exhibit</option>
                             <?php
-                                $exhibitsQuery = "SELECT exhibitID, exhibitName FROM exhibits WHERE isActive = 1";
-                                $exhibitsQuery .= " AND exhibitID NOT IN (SELECT exhibitID FROM accession WHERE posted = 1)";
+                                $exhibitsQuery = "SELECT exhibitID, exhibitName FROM exhibit WHERE isActive = 1 AND exhibitID NOT IN (SELECT exhibitID FROM exhibit_accession WHERE posted = 1)";
                                 $exhibitsResult = mysqli_query($conn, $exhibitsQuery);
 
                                 while ($exhibitsRow = mysqli_fetch_assoc($exhibitsResult)) {

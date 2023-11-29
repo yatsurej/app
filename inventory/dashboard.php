@@ -37,7 +37,7 @@
             <tbody>
             <?php
                 $q = "SELECT e.exhibitName, m.locationTo, SUM(m.actualCount) as totalActualCount
-                    FROM exhibits e
+                    FROM exhibit e
                     INNER JOIN movement m ON e.exhibitID = m.exhibitID
                     GROUP BY e.exhibitName, m.locationTo
                     HAVING totalActualCount = 1

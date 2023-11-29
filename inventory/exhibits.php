@@ -44,7 +44,7 @@
             </thead>
             <tbody>
                 <?php
-                    $q= "SELECT * FROM exhibits";
+                    $q= "SELECT * FROM exhibit";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
