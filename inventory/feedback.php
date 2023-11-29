@@ -32,20 +32,23 @@
             <thead class="text-center">
                 <tr>
                     <th scope="col">User's Name</th>
+                    <th scope="col">Exhibit Name</th>
                     <th scope="col">Rating Score</th>
                     <th scope="col">Feedback Content</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $q = "SELECT feedbacks.*, user.userFirstName, user.userLastName
-                    FROM feedbacks 
-                    JOIN user ON feedbacks.userID = user.userID";
+                $q = "SELECT feedback.*, user.userFirstName, user.userLastName, exhibit.exhibitName
+                    FROM feedback 
+                    LEFT JOIN exhibit ON feedback.exhibitID = exhibit.exhibitID
+                    LEFT JOIN user ON feedback.userID = user.userID";
                 $r = mysqli_query($conn, $q);
 
                 while ($row = mysqli_fetch_assoc($r)) {
                     $userFirstName       = $row['userFirstName'];
                     $userLastName        = $row['userLastName'];
+                    $exhibitName         = $row['exhibitName'];
                     $userRating          = $row['ratingScore'];
                     $userFeedback        = $row['feedbackContent'];
                     ?>
@@ -55,6 +58,7 @@
                             echo $fullName;
                             ?>
                         </td>
+                        <td class= "text-center"><?php echo $exhibitName; ?></td>
                         <td class="text-center">
                             <?php
                             for ($i = 1; $i <= 5; $i++) {

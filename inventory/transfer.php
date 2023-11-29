@@ -46,13 +46,14 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT transfer.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibits.exhibitName, staff.firstName, staff.lastName
-                    FROM transfer 
-                    LEFT JOIN establishment ON transfer.establishmentCode = establishment.establishmentCode
-                    LEFT JOIN gallery ON transfer.galleryCode = gallery.galleryCode
-                    LEFT JOIN racking ON transfer.rackingCode = racking.rackingCode
-                    LEFT JOIN exhibits ON transfer.exhibitID = exhibits.exhibitID
-                    LEFT JOIN staff ON transfer.staffID = staff.staffID";
+                    $q = "SELECT exhibit_transfer.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibit.exhibitName, staff.firstName, staff.lastName
+                    FROM exhibit_transfer 
+                    LEFT JOIN establishment ON exhibit_transfer.establishmentCode = establishment.establishmentCode
+                    LEFT JOIN gallery ON exhibit_transfer.galleryCode = gallery.galleryCode
+                    LEFT JOIN racking ON exhibit_transfer.rackingCode = racking.rackingCode
+                    LEFT JOIN exhibit ON exhibit_transfer.exhibitID = exhibit.exhibitID
+                    LEFT JOIN staff ON exhibit_transfer.staffID = staff.staffID
+                    ORDER BY LENGTH(exhibit_transfer.transferCode), exhibit_transfer.transferCode";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
@@ -82,12 +83,12 @@
                                 <?php if ($postStatus == "Not Posted") { ?>
                                     <button type="button" class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#postConfirmationModal<?php echo $transferCode; ?>">
                                         <i class="fa-solid fa-arrow-up"></i>
-                                        <span class="ms-2">Post</span>
+                                        <span>Post</span>
                                     </button>
                                 <?php } else { ?>
                                     <button type="button" class="btn btn-dark mb-2" disabled>
                                         <i class="fa-solid fa-check"></i>
-                                        <span class="ms-2">Posted</span>
+                                        <span>Posted</span>
                                     </button>
                                 <?php } ?>
                             </div>
@@ -143,8 +144,8 @@
                             <option value="" <?php echo ($accessionExhibit == '') ? 'selected' : ''; ?>>Select exhibit</option>
                             <?php
                                 $query = "SELECT e.exhibitID, e.exhibitName
-                                         FROM exhibits e
-                                         INNER JOIN accession a ON e.exhibitID = a.exhibitID
+                                         FROM exhibit e
+                                         INNER JOIN exhibit_accession a ON e.exhibitID = a.exhibitID
                                          WHERE e.isActive = 1 AND a.posted = 1";
 
                                 $result = mysqli_query($conn, $query);
@@ -298,7 +299,9 @@
                         $('#sourceLocation').val('Error fetching source location.');
                     }
                 });
-            } 
+            } else {
+            $('#sourceLocation').val('Select exhibit first');
+            }
         });
     });
 </script>

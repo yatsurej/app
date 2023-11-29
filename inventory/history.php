@@ -52,10 +52,10 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT movement.*, staff.firstName, staff.lastName, exhibits.exhibitName
+                    $q = "SELECT movement.*, staff.firstName, staff.lastName, exhibit.exhibitName
                         FROM movement
                         JOIN staff ON movement.staffID = staff.staffID
-                        JOIN exhibits ON movement.exhibitID = exhibits.exhibitID
+                        JOIN exhibit ON movement.exhibitID = exhibit.exhibitID
                         WHERE actualCount = 1 $filterCondition
                         ORDER BY entryID";
                     $r = mysqli_query($conn, $q);
