@@ -22,7 +22,7 @@
 ?>
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
-        <p class="text-muted fst-italic">Management of Racking</p>
+        <p class="text-muted fst-italic">Management of racking</p>
         <button class="btn btn-dark mb-2" href="#" data-bs-toggle="modal" data-bs-target="#addRackingModal" role="button">
             <i class="fa-solid fa-plus"></i>
             <span class="ms-2">Add Racking</span>
@@ -126,6 +126,10 @@
     </div>
 </div>
 
+
+<?php
+    $selectedGallery = '';
+?>
 <!-- Add Racking Modal -->
 <div class="modal fade" id="addRackingModal" tabindex="-1" aria-labelledby="addRackingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -139,6 +143,7 @@
                     <div class="mb-3">
                         <label for="galleryCode" class="form-label">Select Gallery</label>
                         <select class="form-select" id="galleryCode" name="galleryCode" required>
+                            <option value="" <?php echo ($selectedGallery == '') ? 'selected' : ''; ?>>Select gallery</option>
                             <?php
                                 $galleryQuery = "SELECT galleryCode, galleryName FROM gallery";
                                 $galleryResult = mysqli_query($conn, $galleryQuery);

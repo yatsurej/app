@@ -24,7 +24,7 @@
 ?>
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
-        <p class="text-muted fst-italic">Management of Exhibit Accession</p>
+        <p class="text-muted fst-italic">Management of exhibit accession</p>
         
         <button class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#addAccessionModal" role="button">
             <i class="fa-solid fa-plus"></i>

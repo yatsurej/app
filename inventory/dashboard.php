@@ -24,7 +24,7 @@
 ?>
 <div class="container w-50">
     <div class="container text-start text-muted fst-italic">
-        List of Exhibits with their Location
+        List of Exhibits with their location
     </div>
     <div class="table-responsive">
         <table class="table table-hover">
@@ -39,6 +39,7 @@
                 $q = "SELECT e.exhibitName, m.locationTo, SUM(m.actualCount) as totalActualCount
                     FROM exhibit e
                     INNER JOIN movement m ON e.exhibitID = m.exhibitID
+                    WHERE e.isActive = 1
                     GROUP BY e.exhibitName, m.locationTo
                     HAVING totalActualCount = 1
                     ORDER BY totalActualCount DESC";

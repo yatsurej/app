@@ -2,7 +2,7 @@
     require './class/class_user.php';
     $classUser   = new User;
 
-    if (isset($_POST['sendFeedback'])){
+    if (isset($_POST['sendRatingFeedback'])){
         $exhibitID    = $_POST['exhibitID'];
         $userName     = $_POST['userProfile'];
         $userEmail    = $_POST['userEmail'];

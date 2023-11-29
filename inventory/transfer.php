@@ -24,7 +24,7 @@
 ?>
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
-        <p class="text-muted fst-italic">Management of Exhibit Transfer</p>
+        <p class="text-muted fst-italic">Management of exhibit transfer</p>
         <button class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#addTransferModal" role="button">
             <i class="fa-solid fa-plus"></i>
             <span class="ms-2">Add Transfer</span>
@@ -124,9 +124,9 @@
     </div>
 </div>
 
-    <?php
-        $accessionExhibit = '';
-    ?>
+<?php
+    $transferExhibit = '';
+?>
     
 <!-- Add Transfer Modal -->
 <div class="modal fade" id="addTransferModal" tabindex="-1" aria-labelledby="addTransferModalLabel" aria-hidden="true">
@@ -141,7 +141,7 @@
                     <div class="mb-3">
                         <label for="exhibitID" class="form-label">Exhibit</label>
                         <select class="form-select" id="exhibitID" name="exhibitID" required>
-                            <option value="" <?php echo ($accessionExhibit == '') ? 'selected' : ''; ?>>Select exhibit</option>
+                            <option value="" <?php echo ($transferExhibit == '') ? 'selected' : ''; ?>>Select exhibit</option>
                             <?php
                                 $query = "SELECT e.exhibitID, e.exhibitName
                                          FROM exhibit e

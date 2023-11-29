@@ -70,7 +70,6 @@
                             <button type="button" class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#editStaffModal<?php echo $staffID; ?>">
                                 <div class="d-flex align-items-center">
                                     <i class="fa-solid fa-pen-to-square"></i>
-                                    <span class="ms-2">Edit</span>
                                 </div>
                             </button>
                         </div>
@@ -150,7 +149,7 @@
                         <input type="text" class="form-control" id="staffPassword" name="staffPassword" placeholder="Enter staff's password" required>
                     </div>
                     <div class="text-end">
-                        <button type="submit" name="addStaff" class="btn btn-primary">Submit</button>
+                        <button type="submit" name="addStaff" class="btn btn-success">Submit</button>
                     </div>
                 </form>
             </div>

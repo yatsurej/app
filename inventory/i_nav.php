@@ -30,7 +30,7 @@
             <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'history.php') ? 'active' : 'inactive'; ?>" href="history.php">History</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'exhibits.php') ? 'active' : 'inactive'; ?>" href="exhibits.php">Exhibits</a>
+            <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'exhibits.php') ? 'active' : 'inactive'; ?>" href="exhibits.php">Exhibit</a>
         </li>
         <li class="nav-item">        
             <a class="nav-link <?php echo (basename($_SERVER['PHP_SELF']) == 'racking.php') ? 'active' : 'inactive'; ?>" href="racking.php">Racking</a>
