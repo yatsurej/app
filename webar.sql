@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2023 at 07:03 AM
+-- Generation Time: Nov 29, 2023 at 08:41 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -218,6 +218,13 @@ CREATE TABLE `feedback` (
   `feedbackDate` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `feedback`
+--
+
+INSERT INTO `feedback` (`ID`, `userID`, `exhibitID`, `ratingScore`, `feedbackContent`, `feedbackDate`) VALUES
+(25, 5, 7, 4, '4', '2023-11-30');
+
 -- --------------------------------------------------------
 
 --
@@ -380,9 +387,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`userID`, `user_name`, `userEmail`) VALUES
-(1, '', 'froizelrej@gmail.com'),
-(2, '', 'albedo@gmail.com'),
-(3, '', 'test@gmail.com');
+(5, 'Froizel Apolonio', 'froizelrej@gmail.com');
 
 --
 -- Indexes for dumped tables
@@ -507,7 +512,7 @@ ALTER TABLE `exhibit_transfer`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `gallery`
@@ -537,7 +542,7 @@ ALTER TABLE `staff`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
@@ -568,7 +573,7 @@ ALTER TABLE `exhibit_transfer`
 --
 ALTER TABLE `feedback`
   ADD CONSTRAINT `feedback_fk1` FOREIGN KEY (`userID`) REFERENCES `user` (`userID`) ON UPDATE NO ACTION,
-  ADD CONSTRAINT `feedback_fk2` FOREIGN KEY (`exhibitID`) REFERENCES `exhibit` (`exhibitID`) ON UPDATE NO ACTION;
+  ADD CONSTRAINT `feedback_fk2` FOREIGN KEY (`exhibitID`) REFERENCES `exhibit` (`exhibitID`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `gallery`

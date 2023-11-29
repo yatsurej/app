@@ -28,7 +28,7 @@
 ?>
 <div class="container w-50 my-3">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
-        <p class="text-muted fst-italic">Management of Establishment</p>
+        <p class="text-muted fst-italic">History of exhibit movement</p>
         <form class="form-inline">
             <select class="custom-select my-1 mr-sm-2" name="filter" id="filter" onchange="this.form.submit()">
                 <option value="" <?php echo ($filter == '') ? 'selected' : ''; ?>>All</option>

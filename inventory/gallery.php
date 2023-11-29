@@ -22,7 +22,7 @@
 ?>
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
-        <p class="text-muted fst-italic">Management of Gallery</p>
+        <p class="text-muted fst-italic">Management of gallery</p>
         <button class="btn btn-dark mb-2" href="#" data-bs-toggle="modal" data-bs-target="#addGalleryModal" role="button">
             <i class="fa-solid fa-plus"></i>
             <span class="ms-2">Add Gallery</span>
@@ -126,6 +126,9 @@
     </div>
 </div>
 
+<?php
+    $selectedEstablishment = '';
+?>
 <!-- Add Gallery Modal -->
 <div class="modal fade" id="addGalleryModal" tabindex="-1" aria-labelledby="addGalleryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -139,6 +142,7 @@
                     <div class="mb-3">
                         <label for="establishmentCode" class="form-label">Select Establishment</label>
                         <select class="form-select" id="establishmentCode" name="establishmentCode" required>
+                            <option value="" <?php echo ($selectedEstablishment == '') ? 'selected' : ''; ?>>Select establishment</option>
                             <?php
                                 $establishmentQuery = "SELECT establishmentCode, establishmentName FROM establishment";
                                 $establishmentResult = mysqli_query($conn, $establishmentQuery);

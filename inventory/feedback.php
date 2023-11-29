@@ -39,25 +39,20 @@
             </thead>
             <tbody>
                 <?php
-                $q = "SELECT feedback.*, user.userFirstName, user.userLastName, exhibit.exhibitName
+                $q = "SELECT feedback.*, user.user_name, exhibit.exhibitName
                     FROM feedback 
                     LEFT JOIN exhibit ON feedback.exhibitID = exhibit.exhibitID
                     LEFT JOIN user ON feedback.userID = user.userID";
                 $r = mysqli_query($conn, $q);
 
                 while ($row = mysqli_fetch_assoc($r)) {
-                    $userFirstName       = $row['userFirstName'];
-                    $userLastName        = $row['userLastName'];
+                    $userName            = $row['user_name'];
                     $exhibitName         = $row['exhibitName'];
                     $userRating          = $row['ratingScore'];
                     $userFeedback        = $row['feedbackContent'];
                     ?>
                     <tr>
-                        <td class="text-center"> <?php
-                            $fullName = ($userFirstName && $userLastName) ? $userFirstName . ' ' . $userLastName : "N/A";
-                            echo $fullName;
-                            ?>
-                        </td>
+                        <td class="text-center"> <?php echo $userName;?></td>
                         <td class= "text-center"><?php echo $exhibitName; ?></td>
                         <td class="text-center">
                             <?php
