@@ -117,6 +117,7 @@
                                     </model-viewer>
                                     <small class="d-block text-center text-muted fst-italic">Location: <?php echo $exhibitLocation?></small>
                                     <p>Information: <br>&emsp;  <?php echo $exhibitInformation; ?></p>
+                                    <p>Model: <br>&emsp; <?php echo $exhibitModel; ?></p>
 
                                     <div class="container text-center mb-5">
                                         <a href="scan.php?exhibitModel=<?php echo $exhibitModel; ?>" class="btn btn-dark">
@@ -128,7 +129,7 @@
                                     </div>
 
                                     <?php 
-                                    if(!$_SESSION['access_token']){?>
+                                    if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) {?>
                                     <div class="container text-center">
                                         <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#googleLoginModal">Rate</button>
                                     </div>

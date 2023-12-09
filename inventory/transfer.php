@@ -53,7 +53,7 @@
                     LEFT JOIN racking ON exhibit_transfer.rackingCode = racking.rackingCode
                     LEFT JOIN exhibit ON exhibit_transfer.exhibitID = exhibit.exhibitID
                     LEFT JOIN staff ON exhibit_transfer.staffID = staff.staffID
-                    ORDER BY LENGTH(exhibit_transfer.transferCode), exhibit_transfer.transferCode";
+                    ORDER BY ID DESC";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {

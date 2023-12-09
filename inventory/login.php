@@ -36,7 +36,7 @@
             </div>
             <br>
             <div class="text-center">
-                <button class="btn btn-dark" name="login">Login</button>
+                <button class="btn btn-dark" name="login">Log in</button>
             </div>
             <hr style="height:1px;border-width:0;color:gray;background-color:gray">
         </form>
