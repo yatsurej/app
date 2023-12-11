@@ -138,7 +138,7 @@
                         <textarea type="text" class="form-control" rows="5" id="exhibitInformation" placeholder="Enter exhibit's information" name="exhibitInformation" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="exhibitModel" class="form-label">Model</label>
+                        <label for="exhibitModel" class="form-label">Model</label><small class="d-block text-muted fst-italic">note: <br>for github, change "github.com" to "raw.githubusercontent.com" <br>remove "/blob" if included in url</small>
                         <input type="text" class="form-control" id="exhibitModel" name="exhibitModel" placeholder="Enter exhibit's 3D model url" required>
                     </div>
                     <div class="text-end">

@@ -57,7 +57,7 @@
                         JOIN staff ON movement.staffID = staff.staffID
                         JOIN exhibit ON movement.exhibitID = exhibit.exhibitID
                         WHERE actualCount = 1 $filterCondition
-                        ORDER BY entryID";
+                        ORDER BY entryID DESC";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {

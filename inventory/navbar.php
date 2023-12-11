@@ -54,7 +54,7 @@
                         </li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="logout.php">Logout</a>
+                        <a class="nav-link" href="logout.php">Log out</a>
                     </li>
                 </ul>
             </div>
