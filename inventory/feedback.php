@@ -8,13 +8,13 @@
 
     if (isset($_SESSION['username'])) {
         $username    = $_SESSION['username'];
-        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
         $staffResult = mysqli_query($conn, $staffQuery);
 
         while($staffRow = mysqli_fetch_assoc($staffResult)){
-            $staffID    = $staffRow['staffID'];
+            $staffID    = $staffRow['userID'];
 
-            $_SESSION['staffID'] = $staffID;
+            $_SESSION['userID'] = $staffID;
         }
     } else {
         header('Location: index.php');
@@ -25,13 +25,13 @@
     <h1 class="text-start fw-bold mt-4">Feedback List</h1>
     <hr style="height:1px;border-width:0;color:gray;background-color:gray">
     <div class="container d-flex justify-content-between align-items-center">
-        <p class="text-muted fst-italic">Records of User Feedbacks</p>
+        <p class="text-muted fst-italic">Records of Guest Feedbacks</p>
     </div>
     <div class="table-responsive">
         <table class="table table-hover">
             <thead class="text-center">
                 <tr>
-                    <th scope="col">User's Name</th>
+                    <th scope="col">Guest's Name</th>
                     <th scope="col">Exhibit Name</th>
                     <th scope="col">Rating Score</th>
                     <th scope="col">Feedback Content</th>
@@ -39,25 +39,25 @@
             </thead>
             <tbody>
                 <?php
-                $q = "SELECT feedback.*, user.user_name, exhibit.exhibitName
+                $q = "SELECT feedback.*, guest.guestGoogleID, exhibit.exhibitName
                     FROM feedback 
                     LEFT JOIN exhibit ON feedback.exhibitID = exhibit.exhibitID
-                    LEFT JOIN user ON feedback.userID = user.userID";
+                    LEFT JOIN guest ON feedback.guestID = guest.guestID";
                 $r = mysqli_query($conn, $q);
 
                 while ($row = mysqli_fetch_assoc($r)) {
-                    $userName            = $row['user_name'];
-                    $exhibitName         = $row['exhibitName'];
-                    $userRating          = $row['ratingScore'];
-                    $userFeedback        = $row['feedbackContent'];
+                    $guestGoogleID        = $row['guestGoogleID'];
+                    $exhibitName          = $row['exhibitName'];
+                    $guestRating          = $row['ratingScore'];
+                    $guestFeedback        = $row['feedbackContent'];
                     ?>
                     <tr>
-                        <td class="text-center"> <?php echo $userName;?></td>
+                        <td class="text-center"> <?php echo $guestGoogleID;?></td>
                         <td class= "text-center"><?php echo $exhibitName; ?></td>
                         <td class="text-center">
                             <?php
                             for ($i = 1; $i <= 5; $i++) {
-                                if ($i <= $userRating) {
+                                if ($i <= $guestRating) {
                                     echo '<i class="fa-solid fa-star text-warning"></i>';
                                 } else {
                                     echo '<i class="fa-regular fa-star text-warning"></i>';
@@ -65,7 +65,7 @@
                             }
                             ?>
                         </td>
-                        <td class="text-center"><?php echo $userFeedback; ?></td>
+                        <td class="text-center"><?php echo $guestFeedback; ?></td>
                     </tr>
                 <?php
                 }

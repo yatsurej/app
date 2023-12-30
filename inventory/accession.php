@@ -1,36 +1,60 @@
 <?php
-    $pageTitle = "Inventory";
-    include '../header.php';
-    include 'navbar.php';
-    include '../db_connect.php';
-    include 'i_nav.php';
-    
-    $_SESSION['last_active_page'] = basename(__FILE__);
+$pageTitle = "Inventory";
+include '../header.php';
+include 'navbar.php';
+include '../db_connect.php';
+include 'i_nav.php';
 
-    if (isset($_SESSION['username'])) {
-        $username    = $_SESSION['username'];
-        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
-        $staffResult = mysqli_query($conn, $staffQuery);
+$_SESSION['last_active_page'] = basename(__FILE__);
 
-        while($staffRow = mysqli_fetch_assoc($staffResult)){
-            $staffID    = $staffRow['staffID'];
+if (isset($_SESSION['username'])) {
+    $username    = $_SESSION['username'];
+    $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
+    $staffResult = mysqli_query($conn, $staffQuery);
 
-            $_SESSION['staffID'] = $staffID;
-        }
-    } else {
-        header('Location: index.php');
-        exit();
+    while ($staffRow = mysqli_fetch_assoc($staffResult)) {
+        $staffID    = $staffRow['userID'];
+
+        $_SESSION['userID'] = $staffID;
     }
+} else {
+    header('Location: index.php');
+    exit();
+}
+
+$postStatusFilter = isset($_GET['post_status']) ? $_GET['post_status'] : '';
+$postStatusCondition = ($postStatusFilter == 'posted') ? 'AND isPosted = 1' : (($postStatusFilter == 'not_posted') ? 'AND isPosted = 0' : '');
+
+$q = "SELECT exhibit_accession.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibit.exhibitName, user.firstName, user.lastName
+    FROM exhibit_accession
+    LEFT JOIN racking ON exhibit_accession.rackingCode = racking.rackingCode
+    LEFT JOIN gallery ON racking.galleryCode = gallery.galleryCode
+    LEFT JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode
+    LEFT JOIN exhibit ON exhibit_accession.exhibitID = exhibit.exhibitID
+    LEFT JOIN user ON exhibit_accession.userID = user.userID
+    WHERE 1 $postStatusCondition
+    ORDER BY exhibit_accession.ID DESC";
+
+$r = mysqli_query($conn, $q);
 ?>
+
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
         <p class="text-muted fst-italic">Management of exhibit accession</p>
-        
-        <button class="btn btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#addAccessionModal" role="button">
+
+        <button class="btn btn-dark mb-1" data-bs-toggle="modal" data-bs-target="#addAccessionModal" role="button">
             <i class="fa-solid fa-plus"></i>
             <span class="ms-2">Add Accession</span>
         </button>
-        
+    </div>
+    <div class="d-flex justify-content-end">
+        <form class="form-inline">
+            <select class="custom-select mr-3" name="post_status" id="post_status" onchange="this.form.submit()">
+                <option value="" <?php echo ($postStatusFilter == '') ? 'selected' : ''; ?>>All</option>
+                <option value="posted" <?php echo ($postStatusFilter == 'posted') ? 'selected' : ''; ?>>Posted</option>
+                <option value="not_posted" <?php echo ($postStatusFilter == 'not_posted') ? 'selected' : ''; ?>>Not Posted</option>
+            </select>
+        </form>
     </div>
     <div class="table-responsive">
         <table class="table table-hover">
@@ -47,34 +71,23 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT exhibit_accession.*, establishment.establishmentName, gallery.galleryName, racking.rackingName, exhibit.exhibitName, staff.firstName, staff.lastName
-                    FROM exhibit_accession 
-                    LEFT JOIN establishment ON exhibit_accession.establishmentCode = establishment.establishmentCode
-                    LEFT JOIN gallery ON exhibit_accession.galleryCode = gallery.galleryCode
-                    LEFT JOIN racking ON exhibit_accession.rackingCode = racking.rackingCode              
-                    LEFT JOIN exhibit ON exhibit_accession.exhibitID = exhibit.exhibitID
-                    LEFT JOIN staff ON exhibit_accession.staffID = staff.staffID
-                    ORDER BY ID DESC";
-                    $r = mysqli_query($conn, $q);
+                while ($row = mysqli_fetch_assoc($r)) {
+                    $accessionCode        = $row['accessionCode'];
+                    $establishmentName    = $row['establishmentName'];
+                    $galleryName          = $row['galleryName'];
+                    $rackingName          = $row['rackingName'];
+                    $exhibitName          = $row['exhibitName'];
+                    $staffFirstName       = $row['firstName'];
+                    $staffLastName        = $row['lastName'];
+                    $accessionDate        = $row['accessionDate'];
+                    $posted               = $row['isPosted'];
 
-                    while ($row = mysqli_fetch_assoc($r)) {
-                        $accessionCode        = $row['accessionCode'];
-                        $establishmentName    = $row['establishmentName'];
-                        $galleryName          = $row['galleryName'];
-                        $rackingName          = $row['rackingName'];
-                        $exhibitName          = $row['exhibitName'];
-                        $staffFirstName       = $row['firstName'];
-                        $staffLastName        = $row['lastName'];
-                        $accessionDate        = $row['accessionDate'];
-                        $posted               = $row['posted'];
-                        
-
-                        $postStatus = ($posted == 1) ? "Posted" : "Not Posted";
-                        ?>
+                    $postStatus = ($posted == 1) ? "Posted" : "Not Posted";
+                    ?>
                     <tr>
                         <td class="text-center"><?php echo $accessionCode; ?></td>
                         <td class="text-center"><?php echo $exhibitName; ?></td>
-                        <td class="text-center"><?php echo $establishmentName . ' -<br>' . $galleryName . ' -<br>' . $rackingName; ?></td>
+                        <td class="text-center"><?php echo $establishmentName . ' - ' . $galleryName . ' - ' . $rackingName; ?></td>
                         <td class="text-center"><?php echo $accessionDate; ?></td>
                         <td class="text-center"><?php echo $staffFirstName . ' ' . $staffLastName; ?></td>
                         <td class="text-center"><?php echo $postStatus; ?></td>
@@ -117,7 +130,7 @@
                         </td>
                     </tr>
                 <?php
-                    }
+                }
                 ?>
             </tbody>
         </table>
@@ -125,7 +138,7 @@
 </div>
 
 <?php
-    $accessionExhibit = '';    
+$accessionExhibit = '';
 ?>
 <!-- Add Accession Modal -->
 <div class="modal fade" id="addAccessionModal" tabindex="-1" aria-labelledby="addAccessionModalLabel" aria-hidden="true">
@@ -142,15 +155,15 @@
                         <select class="form-select" id="exhibitID" name="exhibitID" required>
                             <option value="" <?php echo ($accessionExhibit == '') ? 'selected' : ''; ?>>Select exhibit</option>
                             <?php
-                                $exhibitsQuery = "SELECT exhibitID, exhibitName FROM exhibit WHERE isActive = 1 AND exhibitID NOT IN (SELECT exhibitID FROM exhibit_accession WHERE posted = 1)";
-                                $exhibitsResult = mysqli_query($conn, $exhibitsQuery);
+                            $exhibitsQuery = "SELECT exhibitID, exhibitName FROM exhibit WHERE isActive = 1 AND exhibitID NOT IN (SELECT exhibitID FROM exhibit_accession WHERE isPosted = 1)";
+                            $exhibitsResult = mysqli_query($conn, $exhibitsQuery);
 
-                                while ($exhibitsRow = mysqli_fetch_assoc($exhibitsResult)) {
-                                    $exhibitID   = $exhibitsRow['exhibitID'];
-                                    $exhibitName = $exhibitsRow['exhibitName'];
+                            while ($exhibitsRow = mysqli_fetch_assoc($exhibitsResult)) {
+                                $exhibitID   = $exhibitsRow['exhibitID'];
+                                $exhibitName = $exhibitsRow['exhibitName'];
 
-                                    echo "<option value=\"$exhibitID\">$exhibitName</option>";
-                                }
+                                echo "<option value=\"$exhibitID\">$exhibitName</option>";
+                            }
                             ?>
                         </select>
                     </div>
@@ -184,7 +197,7 @@
                         <input type="date" class="form-control" id="date" name="date" required>
                     </div>
 
-                    <input type="hidden" name="staffID" value="<?php echo $_SESSION['staffID']; ?>">
+                    <input type="hidden" name="staffID" value="<?php echo $_SESSION['userID']; ?>">
                     <div class="text-end">
                         <button type="submit" name="addAccession" class="btn btn-success">Submit</button>
                     </div>
@@ -196,7 +209,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         $("#establishment").html('<option value="">Select establishment destination</option>');
         $("#gallery").html('<option value="">Select gallery destination</option>');
         $("#racking").html('<option value="">Select racking destination</option>');
@@ -205,21 +218,21 @@
             url: "functions.php",
             method: "POST",
             data: { getEstablishments: true },
-            success: function(data) {
+            success: function (data) {
                 $("#establishment").append(data);
             }
         });
 
-        $("#establishment").on("change", function() {
+        $("#establishment").on("change", function () {
             var establishmentCode = $(this).val();
             $("#establishmentCode").val(establishmentCode);
 
             if (establishmentCode) {
                 $("#gallery").html('<option value="">Select gallery destination</option>');
-                $("#gallery").prop("disabled", true); 
+                $("#gallery").prop("disabled", true);
 
                 $("#racking").html('<option value="">Select racking destination</option>');
-                $("#racking").prop("disabled", true); 
+                $("#racking").prop("disabled", true);
 
                 $("#gallery").prop("disabled", false);
 
@@ -227,7 +240,7 @@
                     url: "functions.php",
                     method: "POST",
                     data: { getGalleries: true, establishmentCode: establishmentCode },
-                    success: function(data) {
+                    success: function (data) {
                         $("#gallery").append(data);
                     }
                 });
@@ -240,13 +253,13 @@
             }
         });
 
-        $("#gallery").on("change", function() {
+        $("#gallery").on("change", function () {
             var galleryCode = $(this).val();
             $("#galleryCode").val(galleryCode);
 
             if (galleryCode) {
                 $("#racking").html('<option value="">Select racking destination</option>');
-                $("#racking").prop("disabled", true); 
+                $("#racking").prop("disabled", true);
 
                 $("#racking").prop("disabled", false);
 
@@ -254,7 +267,7 @@
                     url: "functions.php",
                     method: "POST",
                     data: { getRackings: true, galleryCode: galleryCode },
-                    success: function(data) {
+                    success: function (data) {
                         $("#racking").append(data);
                     }
                 });
@@ -264,7 +277,7 @@
             }
         });
 
-        $("#racking").on("change", function() {
+        $("#racking").on("change", function () {
             var rackingCode = $(this).val();
             $("#rackingCode").val(rackingCode);
         });

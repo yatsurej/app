@@ -6,11 +6,11 @@
 
     if (isset($_SESSION['username'])) {
         $username    = $_SESSION['username'];
-        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
         $staffResult = mysqli_query($conn, $staffQuery);
 
         while($staffRow = mysqli_fetch_assoc($staffResult)){
-            $ID             = $staffRow['staffID'];
+            $ID             = $staffRow['userID'];
             $firstName      = $staffRow['firstName'];
             $lastName       = $staffRow['lastName'];
             $contactNumber  = $staffRow['contactNumber'];
@@ -66,11 +66,11 @@
 </div>
 
 <!-- Edit Modal -->
-<div class="modal fade" id="editProfileModal<?php echo $ID; ?>" tabindex="-1" aria-labelledby="editStaffModalLabel" aria-hidden="true">
+<div class="modal fade" id="editProfileModal<?php echo $ID; ?>" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editStaffModalLabel">Edit Staff</h5>
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

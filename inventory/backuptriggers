@@ -1,3 +1,30 @@
+accession
+BEGIN 
+    IF new.isPosted = 1 AND new.isPosted <> old.isPosted THEN 
+
+        INSERT INTO movement 
+            (isPosted, datePosted, movementCode, movementType, exhibitID, locationTo, actualCount, userID) 
+        VALUES 
+            (1, new.datePosted, new.accessionCode, 'ACCESSION', new.exhibitID, new.rackingCode, 1, new.userID); 
+    END IF; 
+END
+
+transfer
+BEGIN 
+    IF new.isPosted = 1 AND new.isPosted <> old.isPosted THEN 
+        INSERT INTO movement 
+            (isPosted, datePosted, movementCode, movementType, exhibitID, locationFrom, locationTo, actualCount, userID) 
+        VALUES 
+            (1, new.datePosted, new.transferCode, 'TRANSFER', new.exhibitID, old.sourceRackingCode, new.currentRackingCode, -1, new.userID); 
+            
+         INSERT INTO movement 
+            (isPosted, datePosted, movementCode, movementType, exhibitID, locationFrom, locationTo, actualCount, userID) 
+        VALUES 
+            (1, new.datePosted, new.transferCode, 'TRANSFER', new.exhibitID, new.sourceRackingCode, new.currentRackingCode, 1, new.userID); 
+    END IF; 
+END
+
+history
 <?php
     $pageTitle = "Inventory";
     include '../header.php';
@@ -80,69 +107,55 @@
                 </tr>
             </thead>
             <tbody>
-            <?php
-                while ($row = mysqli_fetch_assoc($r)) {
-                    $movementCode  = $row['movementCode'];
-                    $movementType  = $row['movementType'];
-                    $exhibitName   = $row['exhibitName'];
-                    $locationFrom  = ($movementType == "ACCESSION") ? "N/A" : $row['locationFrom'];
-                    $locationTo    = $row['locationTo'];
-                    $datePosted    = $row['datePosted'];
-                    $firstName     = $row['firstName'];
-                    $lastName      = $row['lastName'];
+                <?php
+                    while ($row = mysqli_fetch_assoc($r)) {
+                        $movementCode  = $row['movementCode'];
+                        $movementType  = $row['movementType'];
+                        $exhibitName   = $row['exhibitName'];
+                        $locationFrom  = ($movementType == "ACCESSION") ? "N/A" : $row['locationFrom'];
+                        $locationTo    = $row['locationTo'];
+                        $datePosted    = $row['datePosted'];
+                        $firstName     = $row['firstName'];
+                        $lastName      = $row['lastName'];
 
-                    // Details for locationTo
-                    $detailsQueryTo = "SELECT rackingName, galleryName, establishmentName
-                                        FROM racking
-                                        LEFT JOIN gallery ON racking.galleryCode = gallery.galleryCode
-                                        LEFT JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode
-                                        WHERE racking.rackingCode = '$locationTo'";
+                        $detailsToQuery = "SELECT rackingName, galleryName, establishmentName
+                            FROM racking
+                            LEFT JOIN gallery ON racking.galleryCode = gallery.galleryCode
+                            LEFT JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode
+                            WHERE racking.rackingCode = '$locationTo'";
 
-                    $detailsResultTo = mysqli_query($conn, $detailsQueryTo);
-                    $detailsTo = mysqli_fetch_assoc($detailsResultTo);
+                        $detailsToResult = mysqli_query($conn, $detailsToQuery);
+                        $detailsTo = mysqli_fetch_assoc($detailsToResult);
 
-                    $rackingNameTo = isset($detailsTo['rackingName']) ? $detailsTo['rackingName'] : 'N/A';
-                    $galleryNameTo = isset($detailsTo['galleryName']) ? $detailsTo['galleryName'] : 'N/A';
-                    $establishmentNameTo = isset($detailsTo['establishmentName']) ? $detailsTo['establishmentName'] : 'N/A';
+                        $rackingNameTo = $detailsTo['rackingName'];
+                        $galleryNameTo = $detailsTo['galleryName'];
+                        $establishmentNameTo = $detailsTo['establishmentName'];
 
-                    // Details for locationFrom
-                    $detailsQueryFrom = "SELECT rackingName, galleryName, establishmentName
-                                            FROM racking
-                                            LEFT JOIN gallery ON racking.galleryCode = gallery.galleryCode
-                                            LEFT JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode
-                                            WHERE racking.rackingCode = '$locationFrom'";
+                        $detailsFromQuery = "SELECT rackingName, galleryName, establishmentName
+                            FROM racking
+                            LEFT JOIN gallery ON racking.galleryCode = gallery.galleryCode
+                            LEFT JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode
+                            WHERE racking.rackingCode = '$locationFrom'";
 
-                    $detailsResultFrom = mysqli_query($conn, $detailsQueryFrom);
-                    $detailsFrom = mysqli_fetch_assoc($detailsResultFrom);
+                        $detailsFromResult = mysqli_query($conn, $detailsFromQuery);
+                        $detailsFrom = mysqli_fetch_assoc($detailsFromResult);
 
-                    $rackingNameFrom = isset($detailsFrom['rackingName']) ? $detailsFrom['rackingName'] : 'N/A';
-                    $galleryNameFrom = isset($detailsFrom['galleryName']) ? $detailsFrom['galleryName'] : 'N/A';
-                    $establishmentNameFrom = isset($detailsFrom['establishmentName']) ? $detailsFrom['establishmentName'] : 'N/A';
+                        $rackingNameFrom = $detailsFrom['rackingName'];
+                        $galleryNameFrom = $detailsFrom['galleryName'];
+                        $establishmentNameFrom = $detailsFrom['establishmentName'];
 
-                    ?>
-                    <tr>
-                        <td class="text-center"><?php echo $movementCode; ?></td>
-                        <td class="text-center"><?php echo $movementType; ?></td>
-                        <td class="text-center"><?php echo $exhibitName; ?></td>
-                        <td class="text-center">
-                            <?php
-                            echo ($movementType == "ACCESSION")
-                                ? $locationFrom
-                                : ($establishmentNameFrom . ' - ' . $galleryNameFrom . ' - ' . $rackingNameFrom);
-                            ?>
-                        </td>
-                        <td class="text-center">
-                            <?php
-                            echo ($rackingNameTo !== 'N/A')
-                                ? ($establishmentNameTo . ' - ' . $galleryNameTo . ' - ' . $rackingNameTo)
-                                : 'N/A';
-                            ?>
-                        </td>
-                        <td class="text-center"><?php echo $datePosted; ?></td>
-                        <td class="text-center"><?php echo $firstName . ' ' . $lastName; ?></td>
-                    </tr>
-                    <?php
-                }
+                        ?>
+                        <tr>
+                            <td class="text-center"><?php echo $movementCode; ?></td>
+                            <td class="text-center"><?php echo $movementType; ?></td>
+                            <td class="text-center"><?php echo $exhibitName; ?></td>
+                            <td class="text-center"><?php echo $establishmentNameFrom . ' - ' . $galleryNameFrom . ' - ' . $rackingNameFrom; ?></td>
+                            <td class="text-center"><?php echo $establishmentNameTo . ' - ' . $galleryNameTo . ' - ' . $rackingNameTo; ?></td>
+                            <td class="text-center"><?php echo $datePosted; ?></td>
+                            <td class="text-center"><?php echo $firstName . ' ' . $lastName;?></td>
+                        </tr>
+                        <?php
+                    }
                 ?>
             </tbody>
         </table>

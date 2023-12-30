@@ -5,21 +5,38 @@
     include '../db_connect.php';
     include 'i_nav.php';
 
+    $_SESSION['last_active_page'] = basename(__FILE__);
+    
     if (isset($_SESSION['username'])) {
         $username    = $_SESSION['username'];
-        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
         $staffResult = mysqli_query($conn, $staffQuery);
 
         while($staffRow = mysqli_fetch_assoc($staffResult)){
-            $staffID    = $staffRow['staffID'];
+            $staffID    = $staffRow['userID'];
 
-            $_SESSION['staffID'] = $staffID;
+            $_SESSION['userID'] = $staffID;
         }
     } else {
         header('Location: index.php');
         exit();
     }
+
+    $recordsPerPage = 10; 
+    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+    $offset = ($page - 1) * $recordsPerPage;
+
+    $establishmentFilter = isset($_GET['establishment_filter']) ? $_GET['establishment_filter'] : '';
+
+    $q = "SELECT gallery.*, establishment.establishmentName 
+          FROM gallery 
+          JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode
+          WHERE establishment.establishmentCode = '$establishmentFilter' OR '$establishmentFilter' = ''
+          ORDER BY ID ASC
+          LIMIT $offset, $recordsPerPage";
+    $r = mysqli_query($conn, $q);
 ?>
+
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
         <p class="text-muted fst-italic">Management of gallery</p>
@@ -27,6 +44,26 @@
             <i class="fa-solid fa-plus"></i>
             <span class="ms-2">Add Gallery</span>
         </button>
+    </div>
+    <div class="d-flex justify-content-end">
+        <form class="form-inline" method="GET">
+            <select class="custom-select mr-3" name="establishment_filter" id="establishment_filter" onchange="this.form.submit()">
+                <option value="" <?php echo ($establishmentFilter == '') ? 'selected' : ''; ?>>All</option>
+                <?php
+                    $establishmentQuery = "SELECT establishmentCode, establishmentName FROM establishment";
+                    $establishmentResult = mysqli_query($conn, $establishmentQuery);
+
+                    while ($establishmentRow = mysqli_fetch_assoc($establishmentResult)) {
+                        $establishmentCode = $establishmentRow['establishmentCode'];
+                        $establishmentName = $establishmentRow['establishmentName'];
+
+                        $selected = ($establishmentFilter == $establishmentCode) ? 'selected' : '';
+
+                        echo "<option value=\"$establishmentCode\" $selected>$establishmentName</option>";
+                    }
+                ?>
+            </select>
+    </form>
     </div>
     <div class="table-responsive">
         <table class="table table-hover">
@@ -41,11 +78,6 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT gallery.*, establishment.establishmentName 
-                    FROM gallery 
-                    JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode";              
-                    $r = mysqli_query($conn, $q);
-
                     while ($row = mysqli_fetch_assoc($r)) {
                         $galleryCode        = $row['galleryCode'];
                         $galleryName        = $row['galleryName'];
@@ -53,7 +85,7 @@
                         $galleryStatus      = $row['isActive'];
 
                         $statusText = ($galleryStatus == 1) ? "Active" : "Inactive";
-                        ?>
+                ?>
                     <tr>
                         <td class="text-center"><?php echo $galleryCode; ?></td>
                         <td class="text-center"><?php echo $galleryName; ?></td>
@@ -90,7 +122,7 @@
                                                                 $currentEstablishmentCode = $establishmentRow['establishmentCode'];
                                                                 $currentEstablishmentName = $establishmentRow['establishmentName'];
 
-                                                                $selected = ($currentEstablishmentCode == $establishmentCode) ? "selected" : "";
+                                                                $selected = ($currentEstablishmentCode == $row['establishmentCode']) ? "selected" : "";
 
                                                                 echo "<option value=\"$currentEstablishmentCode\" $selected>$currentEstablishmentName</option>";
                                                             }
@@ -125,10 +157,23 @@
         </table>
     </div>
 </div>
+<?php
+    $totalPages = ceil(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM gallery")) / $recordsPerPage);
+?>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i . '&establishment_filter=' . $establishmentFilter; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+    </ul>
+</nav>
 
 <?php
     $selectedEstablishment = '';
 ?>
+
 <!-- Add Gallery Modal -->
 <div class="modal fade" id="addGalleryModal" tabindex="-1" aria-labelledby="addGalleryModalLabel" aria-hidden="true">
     <div class="modal-dialog">

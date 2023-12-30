@@ -5,28 +5,66 @@
     include '../db_connect.php';
     include 'i_nav.php';
 
+    $_SESSION['last_active_page'] = basename(__FILE__);
+    
     if (isset($_SESSION['username'])) {
         $username    = $_SESSION['username'];
-        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
         $staffResult = mysqli_query($conn, $staffQuery);
 
         while($staffRow = mysqli_fetch_assoc($staffResult)){
-            $staffID    = $staffRow['staffID'];
+            $staffID    = $staffRow['userID'];
 
-            $_SESSION['staffID'] = $staffID;
+            $_SESSION['userID'] = $staffID;
         }
     } else {
         header('Location: index.php');
         exit();
     }
+
+    $recordsPerPage = 10; 
+    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+    $offset = ($page - 1) * $recordsPerPage;
+
+    $galleryFilter = isset($_GET['gallery_filter']) ? $_GET['gallery_filter'] : '';
+
+    $q = "SELECT racking.*, gallery.galleryName 
+          FROM racking 
+          JOIN gallery ON racking.galleryCode = gallery.galleryCode
+          WHERE gallery.galleryCode = '$galleryFilter' OR '$galleryFilter' = ''
+          ORDER BY ID ASC
+          LIMIT $offset, $recordsPerPage";
+    $r = mysqli_query($conn, $q);
 ?>
+
 <div class="container w-50">
+
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
         <p class="text-muted fst-italic">Management of racking</p>
         <button class="btn btn-dark mb-2" href="#" data-bs-toggle="modal" data-bs-target="#addRackingModal" role="button">
             <i class="fa-solid fa-plus"></i>
             <span class="ms-2">Add Racking</span>
         </button>
+    </div>
+    <div class="d-flex justify-content-end">
+        <form class="form-inline" method="GET">
+            <select class="custom-select mr-3" name="gallery_filter" id="gallery_filter" onchange="this.form.submit()">
+                <option value="" <?php echo ($galleryFilter == '') ? 'selected' : ''; ?>>All</option>
+                <?php
+                    $galleryQuery = "SELECT galleryCode, galleryName FROM gallery";
+                    $galleryResult = mysqli_query($conn, $galleryQuery);
+    
+                    while ($galleryRow = mysqli_fetch_assoc($galleryResult)) {
+                        $galleryCode = $galleryRow['galleryCode'];
+                        $galleryName = $galleryRow['galleryName'];
+    
+                        $selected = ($galleryFilter == $galleryCode) ? 'selected' : '';
+    
+                        echo "<option value=\"$galleryCode\" $selected>$galleryName</option>";
+                    }
+                ?>
+            </select>
+        </form>
     </div>
     <div class="table-responsive">
         <table class="table table-hover">
@@ -41,11 +79,6 @@
             </thead>
             <tbody>
                 <?php
-                    $q = "SELECT racking.*, gallery.galleryName 
-                    FROM racking 
-                    JOIN gallery ON racking.galleryCode = gallery.galleryCode";             
-                    $r = mysqli_query($conn, $q);
-
                     while ($row = mysqli_fetch_assoc($r)) {
                         $rackingCode        = $row['rackingCode'];
                         $rackingName        = $row['rackingName'];
@@ -53,7 +86,7 @@
                         $rackingStatus      = $row['isActive'];
 
                         $statusText = ($rackingStatus == 1) ? "Active" : "Inactive";
-                        ?>
+                ?>
                     <tr>
                         <td class="text-center"><?php echo $rackingCode; ?></td>
                         <td class="text-center"><?php echo $rackingName; ?></td>
@@ -90,7 +123,7 @@
                                                                 $currentGalleryCode = $galleryRow['galleryCode'];
                                                                 $currentGalleryName = $galleryRow['galleryName'];
 
-                                                                $selected = ($currentGalleryCode == $galleryCode) ? "selected" : "";
+                                                                $selected = ($currentGalleryCode == $row['galleryCode']) ? "selected" : "";
 
                                                                 echo "<option value=\"$currentGalleryCode\" $selected>$currentGalleryName</option>";
                                                             }
@@ -126,10 +159,10 @@
     </div>
 </div>
 
-
 <?php
     $selectedGallery = '';
 ?>
+
 <!-- Add Racking Modal -->
 <div class="modal fade" id="addRackingModal" tabindex="-1" aria-labelledby="addRackingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -170,3 +203,16 @@
         </div>
     </div>
 </div>
+
+<?php
+    $totalPages = ceil(mysqli_num_rows(mysqli_query($conn, "SELECT * FROM racking")) / $recordsPerPage);
+?>
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <?php for ($i = 1; $i <= $totalPages; $i++) : ?>
+            <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i . '&gallery_filter=' . $galleryFilter; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+    </ul>
+</nav>

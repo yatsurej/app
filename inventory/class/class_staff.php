@@ -5,7 +5,7 @@
             // login 
             public function login($username, $password){
                 global $conn;
-                $q  = "SELECT * FROM staff WHERE username = '$username' AND password = '$password' AND isActive = 1";
+                $q  = "SELECT * FROM user WHERE username = '$username' AND password = '$password' AND isActive = 1";
                 $r  = mysqli_query($conn, $q);
 
                 if (mysqli_num_rows($r) > 0) {
@@ -20,14 +20,14 @@
             // staff management
             public function addStaff($staffFirstName, $staffLastName, $staffContactNumber, $staffUsername, $staffPassword){
                 global $conn;
-                $q  = "SELECT * FROM staff WHERE username = '$staffUsername'";
+                $q  = "SELECT * FROM user WHERE username = '$staffUsername'";
                 $r  = mysqli_query($conn, $q);
                 
                 if (mysqli_num_rows($r) > 0) {
                     echo "<script>alert('Username is already taken');window.location.href='/app/inventory/staff-list.php';</script>";
                 } else {
                     global $conn;
-                    $q  = "INSERT INTO staff(firstName, lastName, contactNumber, username, password, role)
+                    $q  = "INSERT INTO user(firstName, lastName, contactNumber, username, password, role)
                            VALUES('$staffFirstName', '$staffLastName', '$staffContactNumber', '$staffUsername', '$staffPassword', 'Staff')";
                     $r  = mysqli_query($conn, $q);
 
@@ -40,11 +40,11 @@
             }
             public function editStaff($staffID, $staffUsername, $staffPassword, $staffStatus){
                 global $conn;
-                $q  = "UPDATE staff 
+                $q  = "UPDATE user 
                       SET username  = '$staffUsername', 
                       password      = '$staffPassword', 
                       isActive      = '$staffStatus' 
-                      WHERE staffID = $staffID";
+                      WHERE userID = $staffID";
                 $r  = mysqli_query($conn, $q);
 
                 if ($r){
@@ -57,13 +57,13 @@
             // profile editing
             public function editProfile($ID, $firstName, $lastName, $contactNumber, $username, $password){
                 global $conn;
-                $q = "UPDATE staff
+                $q = "UPDATE user
                      SET firstName = '$firstName', 
                      lastName      = '$lastName', 
                      contactNumber = '$contactNumber', 
                      username      = '$username', 
                      password      = '$password'
-                     WHERE staffID = $ID";
+                     WHERE userID = $ID";
                 $r  = mysqli_query($conn, $q);
 
                 if ($r){
@@ -252,7 +252,7 @@
             }
             
             // accession management
-            public function addAccession($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
+            public function addAccession($exhibitID, $rackingCode, $date, $staffID){
                 global $conn;
 
                 $latestCode = "SELECT MAX(CAST(SUBSTRING(accessionCode, 2) AS SIGNED)) AS maxCode FROM exhibit_accession";
@@ -263,8 +263,8 @@
                     $maxCode = $row['maxCode'];
             
                     $nextCode = "A" . ($maxCode + 1);
-                    $q = "INSERT INTO exhibit_accession(accessionCode, establishmentCode, galleryCode, rackingCode, exhibitID, accessionDate, staffID)
-                          VALUES('$nextCode', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
+                    $q = "INSERT INTO exhibit_accession(accessionCode, rackingCode, exhibitID, accessionDate, userID)
+                          VALUES('$nextCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
                     $r = mysqli_query($conn, $q);
             
                     if ($r) {
@@ -280,7 +280,7 @@
                 global $conn;
 
                 $q = "UPDATE exhibit_accession 
-                     SET posted = '1', datePosted = CURDATE()
+                     SET isPosted = '1', datePosted = CURDATE()
                      WHERE accessionCode = '$accessionCode'";
                 $r = mysqli_query($conn, $q);
 
@@ -292,7 +292,7 @@
             }
 
             // transfer management
-            public function addTransfer($exhibitID, $sourceLocation, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID){
+            public function addTransfer($exhibitID, $sourceRackingCode, $currentRackingCode, $date, $staffID){
                 global $conn;
 
                 $latestCode = "SELECT MAX(CAST(SUBSTRING(transferCode, 2) AS SIGNED)) AS maxCode FROM exhibit_transfer";
@@ -303,8 +303,8 @@
                     $maxCode = $row['maxCode'];
             
                     $nextCode = "T" . ($maxCode + 1);
-                    $q = "INSERT INTO exhibit_transfer(transferCode, sourceLocation, establishmentCode, galleryCode, rackingCode, exhibitID, transferDate, staffID)
-                          VALUES('$nextCode', '$sourceLocation', '$establishmentCode', '$galleryCode', '$rackingCode', '$exhibitID', '$date', '$staffID')";
+                    $q = "INSERT INTO exhibit_transfer(transferCode, sourceRackingCode,  currentRackingCode, exhibitID, transferDate, userID)
+                          VALUES('$nextCode', '$sourceRackingCode', '$currentRackingCode', '$exhibitID', '$date', '$staffID')";
                     $r = mysqli_query($conn, $q);
             
                     if ($r) {
@@ -320,7 +320,7 @@
                 global $conn;
 
                 $q = "UPDATE exhibit_transfer 
-                     SET posted = '1', datePosted = CURDATE()
+                     SET isPosted = '1', datePosted = CURDATE()
                      WHERE transferCode = '$transferCode'";
                 $r = mysqli_query($conn, $q);
 

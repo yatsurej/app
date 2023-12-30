@@ -8,13 +8,13 @@
 
     if (isset($_SESSION['username'])) {
         $username    = $_SESSION['username'];
-        $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+        $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
         $staffResult = mysqli_query($conn, $staffQuery);
 
         while($staffRow = mysqli_fetch_assoc($staffResult)){
-            $staffID    = $staffRow['staffID'];
+            $staffID    = $staffRow['userID'];
 
-            $_SESSION['staffID'] = $staffID;
+            $_SESSION['userID'] = $staffID;
         }
     } else {
         header('Location: index.php');
@@ -45,11 +45,11 @@
             </thead>
             <tbody>
                 <?php
-                    $q= "SELECT * FROM staff WHERE role = 'Staff' ";
+                    $q= "SELECT * FROM user WHERE role = 'Staff' ";
                     $r = mysqli_query($conn, $q);
 
                     while ($row = mysqli_fetch_assoc($r)) {
-                        $staffID             = $row['staffID'];
+                        $staffID             = $row['userID'];
                         $staffFirstName      = $row['firstName'];
                         $staffLastName       = $row['lastName'];
                         $staffContactNumber  = $row['contactNumber'];
