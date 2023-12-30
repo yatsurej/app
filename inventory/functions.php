@@ -95,16 +95,6 @@
         } else {
             echo "error";
         }
-    } elseif (isset($_GET['action']) && $_GET['action'] === 'deleteStaff' && isset($_GET['id']))  {
-        $id     = $_GET['id'];
-
-        $result = $classStaff->deleteStaff($id);
-
-        if($result){
-            header("Location: staff-list.php");
-        } else {
-            echo "error";
-        }
     } elseif(isset($_POST['addEstablishment'])){
         $establishmentName  = $_POST['establishmentName'];
         $result             = $classStaff->addEstablishment($establishmentName);
@@ -212,13 +202,11 @@
         exit; 
     } elseif (isset($_POST['addAccession'])){
         $exhibitID          = $_POST['exhibitID'];
-        $establishmentCode  = $_POST['establishmentCode'];
-        $galleryCode        = $_POST['galleryCode'];
         $rackingCode        = $_POST['rackingCode'];
         $date               = $_POST['date'];
         $staffID            = $_POST['staffID'];
 
-        $result             = $classStaff->addAccession($exhibitID, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID);
+        $result             = $classStaff->addAccession($exhibitID, $rackingCode, $date, $staffID);
 
         if($result){
             header("Location: accession.php");
@@ -236,14 +224,12 @@
         }
     } elseif (isset($_POST['addTransfer'])){
         $exhibitID          = $_POST['exhibitID'];
-        $sourceLocation     = $_POST['sourceLocation'];
-        $establishmentCode  = $_POST['establishmentCode'];
-        $galleryCode        = $_POST['galleryCode'];
-        $rackingCode        = $_POST['rackingCode'];
+        $sourceRackingCode  = $_POST['sourceLocation'];
+        $currentRackingCode = $_POST['rackingCode'];
         $date               = $_POST['date'];
         $staffID            = $_POST['staffID'];
 
-        $result             = $classStaff->addTransfer($exhibitID, $sourceLocation, $establishmentCode, $galleryCode, $rackingCode, $date, $staffID);
+        $result             = $classStaff->addTransfer($exhibitID, $sourceRackingCode, $currentRackingCode, $date, $staffID);
 
         if($result){
             header("Location: transfer.php");
@@ -253,7 +239,7 @@
     } elseif (isset($_POST['confirmPostTransfer'])){
         $transferCode = $_POST['transferCode'];
 
-        $result        = $classStaff->confirmTransferPost($transferCode);
+        $result       = $classStaff->confirmTransferPost($transferCode);
 
         if($result){
             header("Location: transfer.php");
@@ -263,20 +249,32 @@
     } elseif (isset($_POST['exhibitID'])) {
         $exhibitID = $_POST['exhibitID'];
     
-        $query = "SELECT locationTo, SUM(actualCount) as totalActualCount
+        $query = "SELECT movement.locationTo, establishment.establishmentName, gallery.galleryName, racking.rackingName
                  FROM movement
-                 WHERE exhibitID = $exhibitID
-                 GROUP BY locationTo
-                 ORDER BY totalActualCount DESC
+                 LEFT JOIN racking ON movement.locationTo = racking.rackingCode
+                 LEFT JOIN gallery ON racking.galleryCode = gallery.galleryCode
+                 LEFT JOIN establishment ON gallery.establishmentCode = establishment.establishmentCode
+                 WHERE movement.exhibitID = $exhibitID
+                 GROUP BY movement.locationTo
+                 ORDER BY COUNT(*) DESC
                  LIMIT 1";
     
         $result = mysqli_query($conn, $query);
     
         if ($result && mysqli_num_rows($result) > 0) {
             $movementRow = mysqli_fetch_assoc($result);
-            echo $movementRow['locationTo'];
+            $establishmentName = $movementRow['establishmentName'];
+            $galleryName = $movementRow['galleryName'];
+            $rackingName = $movementRow['rackingName'];
+            $rackingCode = $movementRow['locationTo'];
+    
+            $data = array(
+                'humanReadable' => "$establishmentName - $galleryName - $rackingName",
+                'rackingCode' => $rackingCode
+            );
+            echo json_encode($data);
         } else {
             echo 'error';
         }
-    } 
+    }
 ?>

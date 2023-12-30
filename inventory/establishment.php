@@ -4,6 +4,23 @@
     include 'navbar.php';
     include '../db_connect.php';
     include 'i_nav.php';
+
+    $_SESSION['last_active_page'] = basename(__FILE__);
+
+    if (isset($_SESSION['username'])) {
+        $username    = $_SESSION['username'];
+        $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
+        $staffResult = mysqli_query($conn, $staffQuery);
+
+        while($staffRow = mysqli_fetch_assoc($staffResult)){
+            $staffID    = $staffRow['userID'];
+
+            $_SESSION['userID'] = $staffID;
+        }
+    } else {
+        header('Location: index.php');
+        exit();
+    }
 ?>
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">

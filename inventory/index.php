@@ -7,11 +7,11 @@
     }
     include '../db_connect.php';
     $username    = $_SESSION['username'];
-    $staffQuery  = "SELECT * FROM staff WHERE username = '$username'";
+    $staffQuery  = "SELECT * FROM user WHERE username = '$username'";
     $staffResult = mysqli_query($conn, $staffQuery);
 
     while($staffRow = mysqli_fetch_assoc($staffResult)){
-        $staffID        = $staffRow['staffID'];
+        $staffID        = $staffRow['userID'];
         $staffFirstName = $staffRow['firstName'];
         $staffLastName  = $staffRow['lastName'];    
     }
