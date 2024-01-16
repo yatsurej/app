@@ -34,7 +34,7 @@
                             <a class="nav-link" href="dashboard.php">Inventory</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="feedback.php">Feedbacks</a>
+                            <a class="nav-link" href="feedback.php">Feedback</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="staff.php">Staff</a>
@@ -47,7 +47,7 @@
                             <a class="nav-link" href="dashboard.php">Inventory</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="feedback.php">Feedbacks</a>
+                            <a class="nav-link" href="feedback.php">Feedback</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="profile.php">Profile</a>
