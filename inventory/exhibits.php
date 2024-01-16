@@ -21,7 +21,33 @@
         header('Location: index.php');
         exit();
     }
+    
+    // search button function
+    if (isset($_GET['search'])) {
+        $searchTerm = mysqli_real_escape_string($conn, $_GET['search']);
+        $q = "SELECT * FROM exhibit WHERE exhibitName LIKE '%$searchTerm%'";
+    } else {
+        $q = "SELECT * FROM exhibit";
+    }
+
+    $r = mysqli_query($conn, $q);
+
+    // For table pages
+    $itemsPerPage = 10;
+    $totalItems = mysqli_num_rows($r);
+    $totalPages = ceil($totalItems / $itemsPerPage);
+    $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+    $offset = ($currentPage - 1) * $itemsPerPage;
+
+    if (isset($_GET['search'])) {
+        $q = "SELECT * FROM exhibit WHERE exhibitName LIKE '%$searchTerm%' LIMIT $offset, $itemsPerPage";
+    } else {
+        $q = "SELECT * FROM exhibit LIMIT $offset, $itemsPerPage";
+    }
+
+    $r = mysqli_query($conn, $q);
 ?>
+
 <div class="container w-50">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
         <p class="text-muted fst-italic">Management of exhibit</p>
@@ -50,30 +76,6 @@
             </thead>
             <tbody>
                 <?php
-                    if (isset($_GET['search'])) {
-                        $searchTerm = mysqli_real_escape_string($conn, $_GET['search']);
-                        $q = "SELECT * FROM exhibit WHERE exhibitName LIKE '%$searchTerm%'";
-                    } else {
-                        $q = "SELECT * FROM exhibit";
-                    }
-
-                    $r = mysqli_query($conn, $q);
-
-                    // For table pages
-                    $itemsPerPage = 10;
-                    $totalItems = mysqli_num_rows($r);
-                    $totalPages = ceil($totalItems / $itemsPerPage);
-                    $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
-                    $offset = ($currentPage - 1) * $itemsPerPage;
-
-                    if (isset($_GET['search'])) {
-                        $q = "SELECT * FROM exhibit WHERE exhibitName LIKE '%$searchTerm%' LIMIT $offset, $itemsPerPage";
-                    } else {
-                        $q = "SELECT * FROM exhibit LIMIT $offset, $itemsPerPage";
-                    }
-
-                    $r = mysqli_query($conn, $q);
-
                     while ($row = mysqli_fetch_assoc($r)) {
                         $exhibitCode        = $row['exhibitCode'];
                         $exhibitName        = $row['exhibitName'];
@@ -124,7 +126,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="exhibitInformation" class="form-label">Information</label>
-                                                    <textarea type="text" class="form-control" rows="5" id="exhibitInformation" name="exhibitInformation" readonly><?php echo $exhibitInformation; ?></textarea>
+                                                    <textarea type="text" style="resize: none" class="form-control" rows="5" id="exhibitInformation" name="exhibitInformation" readonly><?php echo $exhibitInformation; ?></textarea>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="exhibitModel" class="form-label">3D Model URL</label>
@@ -153,10 +155,10 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="exhibitInformation" class="form-label">Information</label>
-                                                    <textarea type="text" class="form-control" rows="5" id="exhibitInformation" name="exhibitInformation"><?php echo $exhibitInformation; ?></textarea>
+                                                    <textarea type="text" style="resize: none" class="form-control" rows="5" id="exhibitInformation" name="exhibitInformation"><?php echo $exhibitInformation; ?></textarea>
                                                 </div>
                                                 <div class="mb-3">
-                                                    <label for="exhibitModel" class="form-label">3D Model URL</label>
+                                                    <label for="exhibitModel" class="form-label">3D Model URL</label><small class="d-block text-muted">Note: <br>For Github, replace "github.com" to "raw.githubusercontent.com" <br>Remove "/blob" if included in the URL</small>
                                                     <input type="text" class="form-control" id="exhibitModel" name="exhibitModel" value="<?php echo $exhibitModel; ?>">
                                                 </div>
                                                 <div class="mb-3">
@@ -231,10 +233,10 @@
                     </div>
                     <div class="mb-3">
                         <label for="exhibitInformation" class="form-label">Information</label>
-                        <textarea type="text" class="form-control" rows="5" id="exhibitInformation" placeholder="Enter exhibit's information" name="exhibitInformation" required></textarea>
+                        <textarea type="text" style="resize: none" class="form-control" rows="5" id="exhibitInformation" placeholder="Enter exhibit's information" name="exhibitInformation" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="exhibitModel" class="form-label">3D Model URL</label><small class="d-block text-muted fst-italic">note: <br>for github, change "github.com" to "raw.githubusercontent.com" <br>remove "/blob" if included in url</small>
+                        <label for="exhibitModel" class="form-label">3D Model URL</label><small class="d-block text-muted">Note: <br>For Github, replace "github.com" to "raw.githubusercontent.com" <br>Remove "/blob" if included in the URL</small>
                         <input type="text" class="form-control" id="exhibitModel" name="exhibitModel" placeholder="Enter exhibit's 3D model url" required>
                     </div>
                     <div class="text-end">

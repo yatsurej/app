@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 30, 2023 at 11:54 AM
+-- Generation Time: Jan 16, 2024 at 06:03 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -62,23 +62,16 @@ CREATE TABLE `exhibit` (
 --
 
 INSERT INTO `exhibit` (`exhibitID`, `exhibitCode`, `exhibitName`, `exhibitInformation`, `exhibitModel`, `isActive`) VALUES
-(1, 'E1', 'Ship in A Bottle', 'something something information etc. etc.', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/ship_in_a_bottle/scene.gltf', 1),
-(6, 'E2', 'Elephant Fossil', 'exhibit_test2_information', 'exhibit_test2_modelurl', 1),
-(7, 'E3', 'Dress', 'exhibit_test3_information', 'exhibit_test3_modelurl', 1),
-(8, 'E4', 'Golden Mask', 'exhibit_test4_information', 'exhibit_test4_modelurl', 1),
-(9, 'E5', 'Church Sculpture', 'exhibit_test5_information', 'exhibit_test5_modelurl', 1),
-(10, 'E6', 'Garchomp', 'gible last evolution', 'rrahh', 1),
-(11, 'E7', 'Arceus', 'god of pokemon? bwahaha', 'rraaahhhh', 1),
-(12, 'E8', 'Dialga', 'god of time ', 'rraaaaa', 1),
-(13, 'E9', 'Palkia', 'god of space', 'palkia', 1),
-(14, 'E10', 'giratina', 'anti-matter goes brr brr', 'dfsd', 1),
-(15, 'E11', 'Darkrai', 'nightmare wooo~ scary', 'ror', 1),
-(16, 'E12', 'Gible', 'chomp', 'chomp chomp', 1),
-(17, 'E13', 'Pikachu', 'overrated fr fr', 'pika pika', 1),
-(18, 'E14', 'Shaymin', 'flowerrrrrrr', 'haha', 1),
-(19, 'E15', 'Piplup', 'pengu', 'pengu', 1),
-(20, 'E16', 'Chimchar', 'monkeh', 'monkey', 1),
-(22, 'E17', 'Bulbasaur', 'green', 'green', 1);
+(1, 'E1', 'Ship in A Bottle', 'The delicate ship, intricately detailed with scaled masts and rigging, rests within the confines of a glass bottle, a testament to the patience and precision of its creator.', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/ship_in_a_bottle/scene.gltf', 0),
+(25, 'E2', 'Oton Gold Death Mask', 'A funerary mask that was placed on eyes and nose of the dead, and was attached to the teeth from the two sides of the lower part of the nose cover to keep it in place.\r\n\r\nThe Oton Gold Death Mask was discovered in-situ on June 5, 1967 at Grave #6 in Madiavilla Property in San Antonio, Oton, Iloilo by the National Museum team headed by anthropologists Alfredo Evangelista and F. Landa Jocano. The artefact was found covering a skull. It consisted of eyes and nose coverings, both embellished with repoussé dots. The funerary mask is dated to late 14th to early 15th century A.D. (Age of Trade).\r\n\r\nThe early Bisayans believed that the human body became vulnerable to evil spirits looking for their next hosts once a spirit departed. After the grieving, the deceased, especially the rich and powerful, was placed inside a coffin made of uncorruptible wood. Rich jewel adorned their body, and sheets of gold sealed their eyes and mouth. The gold ornaments served as defenses for the dead as they defended away evil spirits through their radiance.', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Oton%20Golden%20Death%20Mask.glb', 1),
+(26, 'E3', 'Elephant Lower Molar', 'el’-e-fas\r\n750,000 million years old\r\nCabatuan Formation\r\nSitio Bitoguan, Brgy. Jelicuon Montinola, Cabatuan Iloilo\r\n\r\nElephants and stegodon were the largest mammals That ever roamed the area known today as Panay Island, About 750,000 years ago. The most important difference between the two can be observed in the molars. An elephant has crowned, multi-plated, molars, allowing it to graze on grasses and leaves. Whereas, stegendon has low-crowned, roofed-teeth that is well adapted to browsing on twigs and leaves on trees. It also grew longer, straighter tusks that were so close together that they may have draped their trunks over one of the tusks.\r\n\r\nLike its closest living relative, the Asian Elephant, Elephas has two tusks and four molars at any given time. Lower molars, like this fossil, curve inwards (concave) compared to upper molars that curve outwards (convex).', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Elephant%20Lower%20Molar.glb', 1),
+(27, 'E4', 'Elephant Upper Molar', 'el’-e-fas\r\n750,000 million years old\r\nCabatuan Formation\r\nSitio Bitoguan, Brgy. Jelicuon Montinola, Cabatuan Iloilo\r\n\r\nElephas sp. has molars with compressed diamonds-shaped structures called lamellae that are adapted to grinding grasses. This fossil has 13 lamellae forming a complete molar.', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Elephant%20Upper%20Molar.glb', 1),
+(28, 'E5', 'Juvenile Stegodon Tooth', 'steg’-o-don\r\n750,000 million years old\r\nCabatuan Formation\r\nJelicuon, Cabatuan Iloilo\r\n\r\nStegodon sp. Is an extinct, distant cousin of modern elephants. They were forest-dwellers. Their low, roof-like molars were used to browse and crunch twigs, wood, and leaves on trees. This fossil tooth is small and underdeveloped and would have come from a baby stegodon.', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Juvenile%20stegodon%20tooth.glb', 1),
+(29, 'E6', 'Piña Gown', 'Aklan | 2020\r\nPineapple and cotton\r\n\r\nHand-embroidered filipiniana', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Pina%20Gown.glb', 1),
+(30, 'E7', 'Siltstone', 'Invertibrate Trace Fossil\r\n5.33 - 11.63 million years old\r\nTarao Formation, Sapitan-Badiang, Guimbal, Iloilo\r\n\r\nFossilized Burrows in Siltstone or Tunnels left by the digging of an ancient worm-like organism. The burrows were filled with yellowish sand as soon as the animal left the burrow or died.', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Siltstone.glb', 1),
+(31, 'E8', 'Philippinite Tektite', '790,000 million years old\r\nSitio Bitoguan, Brgy. Jelicuon Montinola, Cabatuan, Iloilo\r\n\r\nTektites found in the Philippines are called philippinites. The largest discovered philippinite weighs 1,281.89 grams. This tektite was discovered by the National Museum of the Philippines in 1984 and weighs 18.19 grams. It is one of millions created through the impact of the meteorite about 790,000 years ago. Interestingly, this ball of glass is found in the same rock formation containing the fossils of the large mammals like elephants and stegodons. ', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Tektite.glb', 1),
+(32, 'E9', 'Galingan/Spinning Wheel', 'Indag-an, Miagao, Iloilo\r\n2018\r\nWood, metal, and nylon cord\r\nDonated by Connie F. Atijon', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Spinning%20Wheel.glb', 1),
+(33, 'E10', 'Bestida', 'Female dress with pinilian designs\r\n2020\r\nCotton', 'https://raw.githubusercontent.com/yatsurej/3d-models/main/Bestida.glb', 1);
 
 -- --------------------------------------------------------
 
@@ -103,10 +96,16 @@ CREATE TABLE `exhibit_accession` (
 --
 
 INSERT INTO `exhibit_accession` (`ID`, `accessionCode`, `rackingCode`, `exhibitID`, `accessionDate`, `userID`, `isPosted`, `datePosted`, `timestamp`) VALUES
-(47, 'A1', 'R1', 1, '2023-12-25', 1, 1, '2023-12-25', '2023-12-25 11:22:17'),
-(48, 'A2', 'R9', 10, '2023-12-25', 1, 1, '2023-12-25', '2023-12-25 11:46:03'),
-(49, 'A3', 'R5', 8, '2023-12-26', 1, 1, '2023-12-26', '2023-12-25 16:52:39'),
-(50, 'A4', 'R6', 11, '2023-12-26', 1, 0, '0000-00-00', '2023-12-25 18:05:31');
+(51, 'A1', 'R1', 1, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 14:33:35'),
+(60, 'A10', 'R3', 31, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:57:54'),
+(52, 'A2', 'R4 ', 25, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:50:51'),
+(53, 'A3', 'R1', 26, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:54:16'),
+(54, 'A4', 'R1', 27, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:56:18'),
+(55, 'A5', 'R5', 28, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:56:32'),
+(56, 'A6', 'R7', 29, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:56:52'),
+(57, 'A7', 'R1', 30, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:57:04'),
+(58, 'A8', 'R6', 32, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:57:22'),
+(59, 'A9', 'R8', 33, '2024-01-08', 1, 1, '2024-01-08', '2024-01-08 15:57:42');
 
 --
 -- Triggers `exhibit_accession`
@@ -144,14 +143,6 @@ CREATE TABLE `exhibit_transfer` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `exhibit_transfer`
---
-
-INSERT INTO `exhibit_transfer` (`ID`, `transferCode`, `sourceRackingCode`, `currentRackingCode`, `exhibitID`, `transferDate`, `userID`, `isPosted`, `datePosted`, `timestamp`) VALUES
-(31, 'T1', 'R9', 'R6', 10, '2023-12-27', 5, 1, '2023-12-27', '2023-12-26 16:24:03'),
-(32, 'T2', 'R1', 'R3', 1, '2023-12-27', 5, 1, '2023-12-27', '2023-12-26 16:29:58');
-
---
 -- Triggers `exhibit_transfer`
 --
 DELIMITER $$
@@ -182,6 +173,7 @@ CREATE TABLE `feedback` (
   `guestID` int(11) NOT NULL,
   `exhibitID` int(11) NOT NULL,
   `ratingScore` tinyint(1) NOT NULL,
+  `feedbackTitle` text NOT NULL,
   `feedbackContent` text NOT NULL,
   `feedbackDate` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -190,8 +182,12 @@ CREATE TABLE `feedback` (
 -- Dumping data for table `feedback`
 --
 
-INSERT INTO `feedback` (`feedbackID`, `guestID`, `exhibitID`, `ratingScore`, `feedbackContent`, `feedbackDate`) VALUES
-(25, 5, 7, 4, '4', '2023-11-30');
+INSERT INTO `feedback` (`feedbackID`, `guestID`, `exhibitID`, `ratingScore`, `feedbackTitle`, `feedbackContent`, `feedbackDate`) VALUES
+(26, 6, 26, 3, '', 'test_3stars', '2024-01-09'),
+(27, 6, 27, 5, '', 'test (again)', '2024-01-09'),
+(28, 6, 25, 3, '', 'omg wow cool xd', '2024-01-16'),
+(29, 6, 25, 5, '', '5 stars xd xd', '2024-01-16'),
+(30, 6, 25, 1, 'final test with title', 'xd ', '2024-01-16');
 
 -- --------------------------------------------------------
 
@@ -236,7 +232,7 @@ CREATE TABLE `guest` (
 --
 
 INSERT INTO `guest` (`guestID`, `guestGoogleID`, `guestGoogleEmail`) VALUES
-(5, 'Froizel Apolonio', 'froizelrej@gmail.com');
+(6, '10944241351413152601', 'froizelrej@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -263,13 +259,16 @@ CREATE TABLE `movement` (
 --
 
 INSERT INTO `movement` (`entryID`, `isPosted`, `datePosted`, `movementCode`, `movementType`, `exhibitID`, `locationFrom`, `locationTo`, `actualCount`, `userID`, `timestamp`) VALUES
-(90, 1, '2023-12-25', 'A1', 'ACCESSION', 1, NULL, 'R1', 1, 1, '2023-12-25 11:22:17'),
-(91, 1, '2023-12-25', 'A2', 'ACCESSION', 10, NULL, 'R9', 1, 1, '2023-12-25 11:46:03'),
-(92, 1, '2023-12-26', 'A3', 'ACCESSION', 8, NULL, 'R5', 1, 1, '2023-12-25 16:52:39'),
-(97, 1, '2023-12-27', 'T1', 'TRANSFER', 10, 'R9', 'R9', -1, 5, '2023-12-26 16:24:03'),
-(98, 1, '2023-12-27', 'T1', 'TRANSFER', 10, 'R9', 'R6', 1, 5, '2023-12-26 16:24:03'),
-(99, 1, '2023-12-27', 'T2', 'TRANSFER', 1, 'R1', 'R1', -1, 5, '2023-12-26 16:29:58'),
-(100, 1, '2023-12-27', 'T2', 'TRANSFER', 1, 'R1', 'R3', 1, 5, '2023-12-26 16:29:58');
+(101, 1, '2024-01-08', 'A1', 'ACCESSION', 1, NULL, 'R1', 1, 1, '2024-01-08 14:33:35'),
+(102, 1, '2024-01-08', 'A2', 'ACCESSION', 25, NULL, 'R4 ', 1, 1, '2024-01-08 15:50:51'),
+(103, 1, '2024-01-08', 'A3', 'ACCESSION', 26, NULL, 'R1', 1, 1, '2024-01-08 15:54:16'),
+(104, 1, '2024-01-08', 'A4', 'ACCESSION', 27, NULL, 'R1', 1, 1, '2024-01-08 15:56:18'),
+(105, 1, '2024-01-08', 'A5', 'ACCESSION', 28, NULL, 'R5', 1, 1, '2024-01-08 15:56:32'),
+(106, 1, '2024-01-08', 'A6', 'ACCESSION', 29, NULL, 'R7', 1, 1, '2024-01-08 15:56:52'),
+(107, 1, '2024-01-08', 'A7', 'ACCESSION', 30, NULL, 'R1', 1, 1, '2024-01-08 15:57:04'),
+(108, 1, '2024-01-08', 'A8', 'ACCESSION', 32, NULL, 'R6', 1, 1, '2024-01-08 15:57:22'),
+(109, 1, '2024-01-08', 'A9', 'ACCESSION', 33, NULL, 'R8', 1, 1, '2024-01-08 15:57:42'),
+(110, 1, '2024-01-08', 'A10', 'ACCESSION', 31, NULL, 'R3', 1, 1, '2024-01-08 15:57:54');
 
 -- --------------------------------------------------------
 
@@ -432,13 +431,13 @@ ALTER TABLE `establishment`
 -- AUTO_INCREMENT for table `exhibit`
 --
 ALTER TABLE `exhibit`
-  MODIFY `exhibitID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `exhibitID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `exhibit_accession`
 --
 ALTER TABLE `exhibit_accession`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `exhibit_transfer`
@@ -450,7 +449,7 @@ ALTER TABLE `exhibit_transfer`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `gallery`
@@ -462,13 +461,13 @@ ALTER TABLE `gallery`
 -- AUTO_INCREMENT for table `guest`
 --
 ALTER TABLE `guest`
-  MODIFY `guestID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `guestID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `movement`
 --
 ALTER TABLE `movement`
-  MODIFY `entryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `entryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT for table `racking`
@@ -506,8 +505,8 @@ ALTER TABLE `exhibit_transfer`
 -- Constraints for table `feedback`
 --
 ALTER TABLE `feedback`
-  ADD CONSTRAINT `feedback_fk1` FOREIGN KEY (`guestID`) REFERENCES `guest` (`guestID`) ON UPDATE NO ACTION,
-  ADD CONSTRAINT `feedback_fk2` FOREIGN KEY (`exhibitID`) REFERENCES `exhibit` (`exhibitID`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `feedback_fk1` FOREIGN KEY (`guestID`) REFERENCES `guest` (`guestID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `feedback_fk2` FOREIGN KEY (`exhibitID`) REFERENCES `exhibit` (`exhibitID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `gallery`
