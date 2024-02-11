@@ -14,9 +14,9 @@
     require_once('vendor/autoload.php');
 
     $clientID = "47852619874-gd8grjpupi6v2824afhlvm45mtbu8kvp.apps.googleusercontent.com";
-    $secret = "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";
+    $secret   = "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";
 
-    $gclient = new Google_Client();
+    $gclient  = new Google_Client();
 
     $gclient->setClientId($clientID);
     $gclient->setClientSecret($secret);
@@ -42,19 +42,19 @@
             foreach ($udata as $k => $v) {
                 $_SESSION['login_' . $k] = $v;
             }
-            $_SESSION['ucode'] = $_GET['code'];
+            $_SESSION['ucode']      = $_GET['code'];
             $_SESSION['user_email'] = $udata->email;
-            $_SESSION['profile'] = $udata->name;
-            $_SESSION['id'] = $udata->id;
+            $_SESSION['profile']    = $udata->name;
+            $_SESSION['id']         = $udata->id;
             header('location: view-exhibit.php');
             exit;
         }
     }
 ?>
 
-<div class="container w-50 mt-4">
+<div class="container w-75 mt-4">
     <?php
-    $galleryQuery = "SELECT * FROM gallery WHERE establishmentCode = '$selectedEstablishment'";
+    $galleryQuery  = "SELECT * FROM gallery WHERE establishmentCode = '$selectedEstablishment'";
     $galleryResult = mysqli_query($conn, $galleryQuery);
 
     while ($galleryRow = mysqli_fetch_assoc($galleryResult)) {
@@ -62,14 +62,14 @@
         $currentGalleryName = $galleryRow['galleryName'];
 
         $query = "SELECT e.*, m.locationTo, r.rackingName, SUM(m.actualCount) as totalActualCount
-                    FROM exhibit e
-                    INNER JOIN movement m ON e.exhibitID = m.exhibitID
-                    LEFT JOIN racking r ON m.locationTo = r.rackingCode
-                    LEFT JOIN gallery g ON r.galleryCode = g.galleryCode
-                    WHERE g.establishmentCode = '$selectedEstablishment' AND e.isActive = 1 AND g.galleryCode = '$currentGalleryCode'
-                    GROUP BY e.exhibitName, m.locationTo
-                    HAVING totalActualCount = 1
-                    ORDER BY totalActualCount DESC";
+                  FROM exhibit e
+                  INNER JOIN movement m ON e.exhibitID = m.exhibitID
+                  LEFT JOIN racking r ON m.locationTo = r.rackingCode
+                  LEFT JOIN gallery g ON r.galleryCode = g.galleryCode
+                  WHERE g.establishmentCode = '$selectedEstablishment' AND e.isActive = 1 AND g.galleryCode = '$currentGalleryCode'
+                  GROUP BY e.exhibitName, m.locationTo
+                  HAVING totalActualCount = 1
+                  ORDER BY totalActualCount DESC";
 
         $result = mysqli_query($conn, $query);
 
@@ -89,6 +89,7 @@
                         $exhibitInformation = $row['exhibitInformation'];
                         $exhibitLocation    = $row['rackingName'];
                         
+                        // View ratings
                         $ratingQuery    = "SELECT AVG(ratingScore) as averageRating, COUNT(feedbackID) as ratingCount
                                            FROM feedback
                                            WHERE exhibitID = '$exhibitID'";
@@ -99,7 +100,7 @@
                     ?>
                         <div class="carousel-item <?php echo $firstItem ? 'active' : ''; ?>">
                             <a href="#exhibitModal<?php echo $exhibitID; ?>" data-bs-toggle="modal" class="text-decoration-none" role="button">
-                                <div class="card" style="width: 180px; margin: 0 auto;">
+                                <div class="card" style="width: 230px; margin: 0 auto;">
                                     <div class="card-header">
                                         <h5 class="card-title text-center"><?php echo $exhibitName; ?></h5>
                                     </div>
@@ -123,7 +124,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <!-- <model-viewer> tag -->
-                                        <model-viewer ar src="<?php echo $exhibitModel ?>" camera-controls touch-action="pan-y"></model-viewer>
+                                        <model-viewer ar src="<?php echo $exhibitModel ?>" camera-controls touch-action="pan-y" style="margin: 0 auto;"></model-viewer>
                                         <small class="d-block text-center text-muted fst-italic">Location: <?php echo $exhibitLocation ?></small>
                                         <!-- AR.js -->
                                         <div class="container text-end mb-2">
@@ -138,8 +139,8 @@
                                             <label for="exhibitInformation" class="form-label">Information</label>
                                             <textarea type="text" style="resize: none" class="form-control" rows="6" readonly><?php echo $exhibitInformation; ?></textarea>
                                         </div>
-
-                                        <!-- Display Average Rating and Stars -->
+                                        
+                                        <!-- Number of Ratings and Average score of Ratings -->
                                         <div class="text-center mb-2">
                                            <small>
                                                 <?php echo $ratingCount; ?>
@@ -154,39 +155,23 @@
                                             ?>
                                         </div>
 
-                                        <?php
-                                        if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) { ?>
-                                            <div class="container text-center mb-2">
-                                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#googleLoginModal">Rate and Review</button>
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="text-center mt-3 me-1">
+                                                <form method="post" action="reviews.php">
+                                                    <input type="hidden" name="exhibitID" value="<?php echo $exhibitID; ?>">
+                                                    <button type="submit" class="btn btn-dark ">
+                                                        View Reviews
+                                                    </button>
+                                                </form>
                                             </div>
-                                        <?php } else { ?>
-                                            <div class="container text-center mb-2">
-                                                <button type="button" class="btn btn-dark sendRatingFeedbackButton" data-exhibit-id="<?php echo $exhibitID; ?>" data-bs-toggle="modal" data-bs-target="#sendRatingFeedback">Rate and Review</button>
-                                            </div>
-                                        <?php
-                                            }
-                                        ?>
-                                        <div id="reviewsCarousel" class="carousel slide" data-bs-ride="carousel">
-                                            <div class="carousel-inner">
-                                                <?php
-                                                // Fetch reviews for the current exhibit
-                                                $reviewsQuery = "SELECT * FROM feedback WHERE exhibitID = '$exhibitID'";
-                                                $reviewsResult = mysqli_query($conn, $reviewsQuery);
-
-                                                while ($review = mysqli_fetch_assoc($reviewsResult)) {
-                                                ?>
-                                                    <div class="carousel-item <?php echo $firstReview ? 'active' : ''; ?>">
-                                                        <div class="card" style="width: 18rem;">
-                                                            <div class="card-body">
-                                                                <h5 class="card-title"><?php echo $review['feedbackTitle']; ?></h5>
-                                                                <p class="card-text"><?php echo $review['feedbackContent']; ?></p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                <?php
-                                                    $firstReview = false;
-                                                }
-                                                ?>
+                                            <div class="text-center">
+                                                <?php if (!isset($_SESSION['access_token']) || empty($_SESSION['access_token'])) { ?>
+                                                    <a type="button" class="btn btn-dark" href="<?= $gclient->createAuthUrl() ?>">Rate and Review</a>
+                                                <?php } else { ?>
+                                                    <button type="button" class="btn btn-dark sendRatingFeedbackButton" data-exhibit-id="<?php echo $exhibitID; ?>" data-bs-toggle="modal" data-bs-target="#sendRatingFeedback">
+                                                        Rate and Review
+                                                    </button>
+                                                <?php } ?>
                                             </div>
                                         </div>
                                     </div>
@@ -196,7 +181,8 @@
                 <?php
                         $firstItem = false;
                     }
-                } ?>
+                } 
+                ?>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#<?php echo $carouselID; ?>" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -207,9 +193,7 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
-            <br>
-            <br>
-            <br>
+            <br><br><br>
     <?php
         }
     ?>
@@ -244,19 +228,6 @@
                         <button type="submit" name="sendRatingFeedback" class="btn btn-success">Send</button>
                     </div>
                 </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="googleLoginModal" tabindex="-1" aria-labelledby="googleLoginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <a class="button" href="<?= $gclient->createAuthUrl() ?>">Login with Google</a>
             </div>
         </div>
     </div>

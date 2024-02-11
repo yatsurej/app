@@ -55,7 +55,7 @@
     // Calculate total pages
     $totalPages = ceil($totalRecords / $itemsPerPage);
 ?>
-<div class="container w-50 my-3">
+<div class="container w-75 my-3">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
         <p class="text-muted fst-italic">History of exhibit movement</p>
         <form class="form-inline">
@@ -150,7 +150,7 @@
 </div>
 
 <!-- Bootstrap Pagination -->
-<div class="container w-50">
+<div class="container w-75">
     <nav aria-label="exhibit table page navigation">
         <ul class="pagination justify-content-center">
             <?php if ($currentPage > 1) : ?>

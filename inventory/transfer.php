@@ -50,7 +50,7 @@ $q = "SELECT exhibit_transfer.*,
 $r = mysqli_query($conn, $q);
 ?>
 
-<div class="container w-50">
+<div class="container w-75">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
         <p class="text-muted fst-italic">Management of exhibit transfer</p>
         <button class="btn btn-dark mb-1" data-bs-toggle="modal" data-bs-target="#addTransferModal" role="button">

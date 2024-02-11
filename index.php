@@ -11,9 +11,9 @@
     }
 ?>
 
-<div class="container w-50 mt-4 text-center">
+<div class="container w-75 mt-4 text-center">
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <h3 class="mb-3 fst-italic">Select an Establishment</h3>
+        <h3 class="mb-3 fw-bolder">Please select an Establishment</h3>
         <?php
         $establishmentQuery = "SELECT * FROM establishment WHERE establishmentName <> 'Stockroom'";
         $establishmentResult = mysqli_query($conn, $establishmentQuery);

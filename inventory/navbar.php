@@ -21,7 +21,7 @@
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-fluid w-50 d-flex justify-content-between align-items-center">
+    <div class="container-fluid w-75 d-flex justify-content-between align-items-center">
         <a class="navbar-brand" href="index.php">Web-AR</a>
         <?php if (isset($_SESSION['user_authenticated'])): ?>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

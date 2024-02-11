@@ -13,7 +13,7 @@
     }
 </style>
 
-<div class="container w-50 my-3">
+<div class="container w-75 my-3">
     <h1 class="text-start fw-bold mt-4">Inventory</h1>
     <hr style="height:1px;border-width:0;color:gray;background-color:gray">
     <ul class="nav nav-underline">

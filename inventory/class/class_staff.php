@@ -1,4 +1,7 @@
 <?php
+    require '../vendor/autoload.php';
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
     require '../db_connect.php';
     if (!class_exists('Staff')){
         class Staff {
@@ -13,6 +16,57 @@
                     $role = $row['role'];
                     return $role;
                 } else {
+                    echo $conn->error;
+                }
+            }
+            
+            // recover password
+            public function recover($username) {
+                global $conn;
+                
+                $q  = "SELECT * FROM user WHERE username = '$username' AND isActive = 1";
+                $r  = mysqli_query($conn, $q);
+
+                if ($r && mysqli_num_rows($r) > 0) {
+                    $row = mysqli_fetch_assoc($r);
+                    return $row; 
+                } else {
+                    echo $conn->error;
+                }
+            }
+
+            // send recovery email
+            public function sendRecoveryEmail($email, $resetLink) {
+                $mail = new PHPMailer(true);
+                
+                try {
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';
+                    $mail->Port = 587;
+                    $mail->SMTPSecure = 'tls';
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'froizelrej@gmail.com';
+                    $mail->Password = '01n0l0p4';
+                    $mail->addAddress($email);
+                    $mail->Subject = 'Password Reset';
+                    $mail->Body = "Click the following link to reset your password: $resetLink";
+            
+                    $mail->send();
+                    return true;
+                } catch (Exception $e) {
+                    return false;
+                }
+            }
+
+            // reset password
+            public function resetPassword($userID, $newPassword) {
+                global $conn;
+                $q = "UPDATE user SET password = '$newPassword' WHERE userID = '$userID'";
+                $r = mysqli_query($conn, $q);
+
+                if ($r){
+                    return $conn;
+                } else{
                     echo $conn->error;
                 }
             }

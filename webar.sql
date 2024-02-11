@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 16, 2024 at 06:03 AM
--- Server version: 10.4.25-MariaDB
--- PHP Version: 8.1.10
+-- Generation Time: Feb 09, 2024 at 02:11 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -32,7 +32,7 @@ CREATE TABLE `establishment` (
   `establishmentCode` varchar(20) NOT NULL,
   `establishmentName` text NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 - active; 0 - inactive'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `establishment`
@@ -55,7 +55,7 @@ CREATE TABLE `exhibit` (
   `exhibitInformation` longtext NOT NULL,
   `exhibitModel` longtext NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 - active'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `exhibit`
@@ -89,7 +89,7 @@ CREATE TABLE `exhibit_accession` (
   `isPosted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 - Not Posted; 1 - Posted',
   `datePosted` date NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `exhibit_accession`
@@ -140,7 +140,7 @@ CREATE TABLE `exhibit_transfer` (
   `isPosted` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0 - Not Posted; 1 - Posted',
   `datePosted` date NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Triggers `exhibit_transfer`
@@ -176,18 +176,19 @@ CREATE TABLE `feedback` (
   `feedbackTitle` text NOT NULL,
   `feedbackContent` text NOT NULL,
   `feedbackDate` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `feedback`
 --
 
 INSERT INTO `feedback` (`feedbackID`, `guestID`, `exhibitID`, `ratingScore`, `feedbackTitle`, `feedbackContent`, `feedbackDate`) VALUES
-(26, 6, 26, 3, '', 'test_3stars', '2024-01-09'),
-(27, 6, 27, 5, '', 'test (again)', '2024-01-09'),
-(28, 6, 25, 3, '', 'omg wow cool xd', '2024-01-16'),
-(29, 6, 25, 5, '', '5 stars xd xd', '2024-01-16'),
-(30, 6, 25, 1, 'final test with title', 'xd ', '2024-01-16');
+(26, 6, 26, 3, 'test', 'test_3stars', '2024-01-09'),
+(27, 6, 27, 5, 'test1', 'test (again)', '2024-01-09'),
+(28, 6, 25, 3, 'sdkfhsd', 'omg wow cool xd', '2024-01-16'),
+(29, 6, 25, 5, 'xd', '5 stars xd xd', '2024-01-16'),
+(30, 6, 25, 1, 'final test with title', 'xd ', '2024-01-16'),
+(32, 6, 28, 4, 'First Rating 4 starsako', 'testing hehe', '2024-02-08');
 
 -- --------------------------------------------------------
 
@@ -201,7 +202,7 @@ CREATE TABLE `gallery` (
   `galleryName` text NOT NULL,
   `establishmentCode` varchar(20) NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 - active; 0 - inactive'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `gallery`
@@ -225,7 +226,7 @@ CREATE TABLE `guest` (
   `guestID` int(11) NOT NULL,
   `guestGoogleID` varchar(20) NOT NULL,
   `guestGoogleEmail` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `guest`
@@ -252,7 +253,7 @@ CREATE TABLE `movement` (
   `actualCount` float NOT NULL,
   `userID` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `movement`
@@ -282,7 +283,7 @@ CREATE TABLE `racking` (
   `rackingName` text NOT NULL,
   `galleryCode` varchar(20) NOT NULL,
   `isActive` tinyint(1) DEFAULT 1 COMMENT '1 - active; 0 - inactive1 - active; 0 - inactive'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `racking`
@@ -312,23 +313,24 @@ CREATE TABLE `user` (
   `firstName` text NOT NULL,
   `lastName` text NOT NULL,
   `contactNumber` varchar(20) NOT NULL,
+  `email` text NOT NULL,
   `username` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
   `role` text NOT NULL,
   `isActive` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 - active; 0 - inactive'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`userID`, `firstName`, `lastName`, `contactNumber`, `username`, `password`, `role`, `isActive`) VALUES
-(1, 'Admin', 'Admin', '09123456789', 'admin', 'admin', 'Admin', 1),
-(2, 'Gon', 'Freecs', '09123456789', 'gon', 'gon', 'Staff', 1),
-(3, 'Killua', 'Zoldyck', '09123456789', 'killua', 'killua', 'Staff', 1),
-(4, 'Albedo', 'Labidabs', '123456789', 'albedo', 'albedo', 'Staff', 1),
-(5, 'Kazuha', 'Kaedehara', '7684324', 'kazuha', 'kazuha', 'Admin', 1),
-(6, 'Pearl', 'Universe', '322121', 'pearl', 'pearl', 'Staff', 1);
+INSERT INTO `user` (`userID`, `firstName`, `lastName`, `contactNumber`, `email`, `username`, `password`, `role`, `isActive`) VALUES
+(1, 'Admin', 'Admin', '09123456789', 'froizelrej@gmail.com', 'admin', 'admin', 'Admin', 1),
+(2, 'Gon', 'Freecs', '09123456789', '', 'gon', 'gon', 'Staff', 1),
+(3, 'Killua', 'Zoldyck', '09123456789', '', 'killua', 'killua', 'Staff', 1),
+(4, 'Albedo', 'Labidabs', '123456789', '', 'albedo', 'albedo', 'Staff', 1),
+(5, 'Kazuha', 'Kaedehara', '7684324', '', 'kazuha', 'kazuha', 'Admin', 1),
+(6, 'Pearl', 'Universe', '322121', '', 'pearl', 'pearl', 'Staff', 1);
 
 --
 -- Indexes for dumped tables
@@ -449,7 +451,7 @@ ALTER TABLE `exhibit_transfer`
 -- AUTO_INCREMENT for table `feedback`
 --
 ALTER TABLE `feedback`
-  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `feedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `gallery`

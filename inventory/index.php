@@ -25,7 +25,7 @@
         width: 80%;
     }
 </style>
-<div class="container w-50 text-center mt-5">
+<div class="container w-75 text-center mt-5">
     <p class="fs-3">Welcome, 
         <?php 
             if ($_SESSION['user_role'] == 'Admin') {

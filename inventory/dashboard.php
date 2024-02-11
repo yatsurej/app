@@ -43,7 +43,7 @@
     $r = mysqli_query($conn, $q);
 ?>
 
-<div class="container w-50">
+<div class="container w-75">
     <div class="container text-start text-muted fst-italic">
         List of Exhibits with their location
     </div>

@@ -13,7 +13,7 @@
             if ($result) {
                 $_SESSION['user_authenticated'] = true;
                 $_SESSION['user_role'] = $result;
-                $_SESSION['username'] = $username;
+                $_SESSION['username']  = $username;
 
                 header("Location: index.php");
                 exit();
@@ -21,7 +21,28 @@
                 echo "<script>alert('Invalid login details');window.location.href='login.php';</script>";
             }
         }
-    }  elseif (isset($_POST['addExhibit'])){
+    } elseif (isset($_POST['recover'])) {
+        $username = $_POST['username'];
+    
+        $result = $classStaff->recover($username);
+    
+        if ($result) {
+            $token = bin2hex(random_bytes(32));
+    
+            $_SESSION['reset_token'] = $token;
+            $_SESSION['reset_userID'] = $result['userID'];
+    
+            $resetLink = "http://localhost/app/inventory/reset-password.php?token=$token";
+            $mailResult = $classStaff->sendRecoveryEmail($result['email'], $resetLink);
+    
+            if ($mailResult) {
+                header("Location: recover-password.php");
+                exit();
+            } else {
+                echo "Failed to send recovery email.";
+            }
+        }
+    } elseif (isset($_POST['addExhibit'])){
         $exhibitName        = $_POST['exhibitName'];
         $exhibitInformation = $_POST['exhibitInformation'];
         $exhibitModel       = $_POST['exhibitModel'];

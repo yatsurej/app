@@ -14,7 +14,7 @@
 ?>
 
 
-<div class="container w-50">
+<div class="container w-75">
     <h1 class="text-start fw-bold mt-3">Log in</h1>
     <hr style="height:1px;border-width:0;color:gray;background-color:gray">
     <div class="row justify-content-center">
@@ -36,7 +36,7 @@
             </div>
             <br>
             <div class="text-center">
-                <button class="btn btn-dark" name="login">Log in</button>
+                <button class="btn btn-dark mb-3" name="login">Log in</button>
             </div>
             <hr style="height:1px;border-width:0;color:gray;background-color:gray">
         </form>

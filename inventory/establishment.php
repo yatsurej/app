@@ -22,7 +22,7 @@
         exit();
     }
 ?>
-<div class="container w-50">
+<div class="container w-75">
     <div class="container d-flex justify-content-between align-items-center text-muted fst-italic">
         <p class="text-muted fst-italic">Management of establishment</p>
         <button class="btn btn-dark mb-2" href="#" data-bs-toggle="modal" data-bs-target="#addEstablishmentModal" role="button">

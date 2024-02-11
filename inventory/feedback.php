@@ -21,7 +21,7 @@
         exit();
     }
 ?>
-<div class="container w-50">
+<div class="container w-75">
     <h1 class="text-start fw-bold mt-4">Feedback List</h1>
     <hr style="height:1px;border-width:0;color:gray;background-color:gray">
     <div class="container d-flex justify-content-between align-items-center">

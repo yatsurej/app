@@ -25,7 +25,7 @@
 ?>
 
 
-<div class="container w-50">
+<div class="container w-75">
     <h1 class="text-start fw-bold mt-3">Your Profile</h1>
     <hr style="height:1px;border-width:0;color:gray;background-color:gray">
     <div class="row justify-content-center">
