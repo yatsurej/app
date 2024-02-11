@@ -36,11 +36,6 @@
                 echo "Unknown Role";
             }
             echo $staffFirstName . ' ' . $staffLastName;
-            if ($_SESSION['user_role'] == 'Admin') {
-                echo '<img src="../images/admin.gif" alt="">';
-            } elseif ($_SESSION['user_role'] == 'Staff') {
-                echo '<img src="../images/staff.gif" alt="">';
-            } 
         ?>
     </p>
 </div>
